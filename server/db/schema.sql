@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS organizers (
   github TEXT,
   twitter TEXT,
   instagram TEXT,
+  facebook TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

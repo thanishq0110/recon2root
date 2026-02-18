@@ -390,7 +390,9 @@ document.getElementById('contentForm')?.addEventListener('submit', async (e) => 
   }
 });
 
-// ── Organizers ───────────────────────────────────────────────
+// ── Organizers ────────────────────────────────────────────────
+let editingOrganizerId = null;
+
 document.getElementById('orgForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const formData = new FormData();
@@ -398,23 +400,36 @@ document.getElementById('orgForm')?.addEventListener('submit', async (e) => {
   formData.append('title', document.getElementById('orgTitle').value);
   formData.append('description', document.getElementById('orgDesc').value);
   formData.append('is_faculty', document.getElementById('orgIsFaculty').checked ? 'true' : 'false');
+  
   const linkedin = document.getElementById('orgLinkedin')?.value;
   const github = document.getElementById('orgGithub')?.value;
   const twitter = document.getElementById('orgTwitter')?.value;
   const instagram = document.getElementById('orgInstagram')?.value;
+  const facebook = document.getElementById('orgFacebook')?.value;
+  
   if (linkedin) formData.append('linkedin', linkedin);
   if (github) formData.append('github', github);
   if (twitter) formData.append('twitter', twitter);
   if (instagram) formData.append('instagram', instagram);
+  if (facebook) formData.append('facebook', facebook);
+  
   const photo = document.getElementById('orgPhoto')?.files[0];
   if (photo) formData.append('photo', photo);
 
   try {
-    const res = await fetch(`${API}/api/organizers`, { method: 'POST', body: formData });
+    let res;
+    if (editingOrganizerId) {
+      // Update existing
+      res = await fetch(`${API}/api/organizers/${editingOrganizerId}`, { method: 'PUT', body: formData });
+    } else {
+      // Create new
+      res = await fetch(`${API}/api/organizers`, { method: 'POST', body: formData });
+    }
+    
     const data = await res.json();
     if (res.ok) {
-      showFeedback('orgFeedback', '✅ Organizer added!');
-      document.getElementById('orgForm').reset();
+      showFeedback('orgFeedback', editingOrganizerId ? '✅ Organizer updated!' : '✅ Organizer added!');
+      resetOrgForm();
       loadAdminOrganizers();
     } else {
       showFeedback('orgFeedback', data.error || 'Failed', 'error');
@@ -423,6 +438,56 @@ document.getElementById('orgForm')?.addEventListener('submit', async (e) => {
     showFeedback('orgFeedback', 'Network error', 'error');
   }
 });
+
+function resetOrgForm() {
+  document.getElementById('orgForm').reset();
+  editingOrganizerId = null;
+  const btn = document.querySelector('#orgForm button[type="submit"]');
+  btn.textContent = '➕ Add Organizer';
+  btn.classList.remove('btn-update'); // Optional style class
+  // Remove cancel button if exists
+  document.getElementById('btnCancelEdit')?.remove();
+}
+
+window.editOrganizer = async (id) => {
+  try {
+    const res = await fetch(`${API}/api/organizers`);
+    const organizers = await res.json();
+    const org = organizers.find(o => o.id === id);
+    if (!org) return;
+
+    document.getElementById('orgName').value = org.name;
+    document.getElementById('orgTitle').value = org.title;
+    document.getElementById('orgDesc').value = org.description || '';
+    document.getElementById('orgIsFaculty').checked = !!org.is_faculty;
+    document.getElementById('orgLinkedin').value = org.linkedin || '';
+    document.getElementById('orgGithub').value = org.github || '';
+    document.getElementById('orgTwitter').value = org.twitter || '';
+    document.getElementById('orgInstagram').value = org.instagram || '';
+    document.getElementById('orgFacebook').value = org.facebook || '';
+    
+    editingOrganizerId = id;
+    
+    const btn = document.querySelector('#orgForm button[type="submit"]');
+    btn.textContent = '💾 Update Organizer';
+    
+    // Add cancel button if not exists
+    if (!document.getElementById('btnCancelEdit')) {
+      const cancelBtn = document.createElement('button');
+      cancelBtn.type = 'button';
+      cancelBtn.id = 'btnCancelEdit';
+      cancelBtn.textContent = 'Cancel Edit';
+      cancelBtn.className = 'btn-secondary'; // Assuming this class exists or generic style
+      cancelBtn.style.marginLeft = '10px';
+      cancelBtn.onclick = resetOrgForm;
+      btn.parentNode.appendChild(cancelBtn);
+    }
+
+    document.getElementById('orgForm').scrollIntoView({ behavior: 'smooth' });
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 async function loadAdminOrganizers() {
   const list = document.getElementById('adminOrgList');
@@ -445,7 +510,10 @@ async function loadAdminOrganizers() {
             <div class="admin-video-type">${escHtml(o.title)}${o.is_faculty ? ' · Faculty' : ''}</div>
           </div>
         </div>
-        <button class="btn-delete" data-id="${o.id}">Delete</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-edit" onclick="editOrganizer('${o.id}')" style="background:var(--accent-dim);color:var(--accent);border:none;padding:6px 12px;border-radius:4px;cursor:pointer;">✎ Edit</button>
+          <button class="btn-delete" data-id="${o.id}">Delete</button>
+        </div>
       </div>
     `).join('');
     
