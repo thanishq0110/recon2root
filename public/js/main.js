@@ -280,31 +280,34 @@ async function loadOrganizers() {
     const team = organizers.filter(o => !o.is_faculty);
     const faculty = organizers.filter(o => o.is_faculty);
 
-    const renderCard = (o, idx) => {
-      const isReversed = idx % 2 !== 0;
-      const initials = o.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const renderCard = (o) => {
+      const nameParts = o.name.trim().split(' ');
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(' ');
+      const initials = nameParts.map(w => w[0]).join('').slice(0, 2).toUpperCase();
       const photoHtml = o.photo
-        ? `<img src="/uploads/photos/${escHtml(o.photo)}" alt="${escHtml(o.name)}" class="org-photo" />`
-        : `<div class="org-photo-placeholder">${initials}</div>`;
+        ? `<img src="/uploads/photos/${escHtml(o.photo)}" alt="${escHtml(o.name)}" />`
+        : `<div class="org-card-photo-placeholder">${initials}</div>`;
 
       return `
-        <div class="org-profile-card ${isReversed ? 'reversed' : ''} ${o.is_faculty ? 'faculty' : ''}">
-          <div class="org-photo-wrap">${photoHtml}</div>
-          <div class="org-info">
-            <div class="org-title-badge">${escHtml(o.title)}</div>
-            <h3 class="org-name">${escHtml(o.name)}</h3>
-            ${o.description ? `<p class="org-desc">${escHtml(o.description)}</p>` : ''}
+        <div class="org-card ${o.is_faculty ? 'faculty' : ''}">
+          <div class="org-card-photo">${photoHtml}</div>
+          <div class="org-card-info">
+            <div class="org-card-firstname">${escHtml(firstName)}</div>
+            ${lastName ? `<div class="org-card-lastname">${escHtml(lastName)}</div>` : ''}
+            <div class="org-card-role">${escHtml(o.title)}</div>
+            ${o.description ? `<div class="org-card-desc">${escHtml(o.description)}</div>` : ''}
           </div>
         </div>
       `;
     };
 
-    let html = team.map((o, i) => renderCard(o, i)).join('');
+    let html = `<div class="org-grid">${team.map(o => renderCard(o)).join('')}</div>`;
 
     if (faculty.length > 0) {
       html += `
         <div class="faculty-divider"><span>Faculty Coordinators</span></div>
-        ${faculty.map((o, i) => renderCard(o, i)).join('')}
+        <div class="org-grid">${faculty.map(o => renderCard(o)).join('')}</div>
       `;
     }
 
