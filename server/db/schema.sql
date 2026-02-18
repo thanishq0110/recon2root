@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS organizers (
   linkedin TEXT,
   github TEXT,
   twitter TEXT,
+  instagram TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -401,9 +401,11 @@ document.getElementById('orgForm')?.addEventListener('submit', async (e) => {
   const linkedin = document.getElementById('orgLinkedin')?.value;
   const github = document.getElementById('orgGithub')?.value;
   const twitter = document.getElementById('orgTwitter')?.value;
+  const instagram = document.getElementById('orgInstagram')?.value;
   if (linkedin) formData.append('linkedin', linkedin);
   if (github) formData.append('github', github);
   if (twitter) formData.append('twitter', twitter);
+  if (instagram) formData.append('instagram', instagram);
   const photo = document.getElementById('orgPhoto')?.files[0];
   if (photo) formData.append('photo', photo);
 
