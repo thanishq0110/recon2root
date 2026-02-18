@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../db/database');
-const auth = require('../middleware/auth');
+const { requireAuth: auth } = require('../middleware/auth');
 const { uploadPhoto } = require('../middleware/upload');
 
 // GET /api/organizers — public
@@ -28,6 +28,27 @@ router.post('/', auth, uploadPhoto.single('photo'), (req, res) => {
   ).run(id, name, title, description || '', photo, is_faculty === 'true' ? 1 : 0, sort_order);
 
   res.json({ id, name, title, description, photo, is_faculty, sort_order });
+});
+
+// POST /api/organizers/reorder — admin
+router.post('/reorder', auth, (req, res) => {
+  const { mapping } = req.body; // [{ id: '...', sort_order: 1 }, ...]
+  if (!Array.isArray(mapping)) return res.status(400).json({ error: 'Invalid mapping' });
+
+  const updateStmt = db.prepare('UPDATE organizers SET sort_order = ? WHERE id = ?');
+  const transaction = db.transaction((items) => {
+    for (const item of items) {
+      updateStmt.run(item.sort_order, item.id);
+    }
+  });
+
+  try {
+    transaction(mapping);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Reorder failed:', error);
+    res.status(500).json({ error: 'Reorder failed' });
+  }
 });
 
 // PUT /api/organizers/:id — admin: update

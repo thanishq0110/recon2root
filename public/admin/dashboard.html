@@ -192,7 +192,14 @@
       </div>
       <div class="panel-card">
         <h2 class="panel-section-title">Manage Organizers</h2>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+          <button id="toggleReorderBtn" class="btn-save" style="background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);">⇅ Reorder</button>
+        </div>
         <div id="adminOrgList"><p class="panel-hint">Loading...</p></div>
+        <div id="reorderControls" style="display:none;margin-top:16px;text-align:right;">
+          <button id="saveReorderBtn" class="btn-save">💾 Save Order</button>
+          <button id="cancelReorderBtn" class="btn-save" style="background:transparent;border:1px solid var(--border);">Cancel</button>
+        </div>
       </div>
     </div>
 

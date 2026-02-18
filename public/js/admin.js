@@ -428,8 +428,9 @@ async function loadAdminOrganizers() {
       return;
     }
     list.innerHTML = organizers.map((o) => `
-      <div class="admin-video-item">
-        <div style="display:flex;align-items:center;gap:12px;">
+      <div class="admin-video-item org-item" data-id="${o.id}">
+        <div style="display:flex;align-items:center;gap:12px;pointer-events:none;">
+          <div class="drag-handle" style="display:none;cursor:grab;padding-right:8px;font-size:1.2rem;color:var(--text-muted);">☰</div>
           ${o.photo ? `<img src="/uploads/photos/${escHtml(o.photo)}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;" />` : `<div style="width:44px;height:44px;border-radius:50%;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);font-size:0.8rem;">${escHtml(o.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())}</div>`}
           <div>
             <div class="admin-video-title">${escHtml(o.name)}</div>
@@ -439,12 +440,111 @@ async function loadAdminOrganizers() {
         <button class="btn-delete" data-id="${o.id}">Delete</button>
       </div>
     `).join('');
+    
+    // Add delete listeners
     list.querySelectorAll('.btn-delete').forEach((btn) => {
       btn.addEventListener('click', () => deleteOrganizer(btn.dataset.id));
+    });
+
+    // Add drag listeners
+    list.querySelectorAll('.org-item').forEach(item => {
+      item.addEventListener('dragstart', handleDragStart);
+      item.addEventListener('dragover', handleDragOver);
+      item.addEventListener('drop', handleDrop);
+      item.addEventListener('dragend', handleDragEnd);
     });
   } catch {
     list.innerHTML = '<p class="panel-hint">Failed to load organizers.</p>';
   }
+}
+
+// ── Reorder Logic ──
+let dragSrcEl = null;
+
+function handleDragStart(e) {
+  this.style.opacity = '0.4';
+  dragSrcEl = this;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', this.innerHTML);
+}
+
+function handleDragOver(e) {
+  if (e.preventDefault) e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function handleDrop(e) {
+  if (e.stopPropagation) e.stopPropagation();
+  if (dragSrcEl !== this) {
+    // Swap DOM elements
+    const list = this.parentNode;
+    const items = [...list.children];
+    const srcIndex = items.indexOf(dragSrcEl);
+    const targetIndex = items.indexOf(this);
+
+    if (srcIndex < targetIndex) {
+      list.insertBefore(dragSrcEl, this.nextSibling);
+    } else {
+      list.insertBefore(dragSrcEl, this);
+    }
+  }
+  return false;
+}
+
+function handleDragEnd() {
+  this.style.opacity = '1';
+}
+
+document.getElementById('toggleReorderBtn')?.addEventListener('click', () => {
+  const isReordering = document.getElementById('reorderControls').style.display !== 'none';
+  toggleReorderMode(!isReordering);
+});
+
+document.getElementById('cancelReorderBtn')?.addEventListener('click', () => {
+  toggleReorderMode(false);
+  loadAdminOrganizers(); // Reset order
+});
+
+document.getElementById('saveReorderBtn')?.addEventListener('click', async () => {
+  const items = document.querySelectorAll('.org-item');
+  const mapping = Array.from(items).map((item, index) => ({
+    id: item.dataset.id,
+    sort_order: index + 1
+  }));
+
+  try {
+    const res = await fetch(`${API}/api/organizers/reorder`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mapping })
+    });
+    
+    if (res.ok) {
+      showFeedback('orgFeedback', '✅ Order saved!');
+      toggleReorderMode(false);
+    } else {
+      showFeedback('orgFeedback', 'Failed to save order', 'error');
+    }
+  } catch {
+    showFeedback('orgFeedback', 'Network error', 'error');
+  }
+});
+
+function toggleReorderMode(enable) {
+  const list = document.getElementById('adminOrgList');
+  const controls = document.getElementById('reorderControls');
+  const toggleBtn = document.getElementById('toggleReorderBtn');
+  
+  controls.style.display = enable ? 'block' : 'none';
+  toggleBtn.style.display = enable ? 'none' : 'block';
+  
+  list.querySelectorAll('.org-item').forEach(item => {
+    item.draggable = enable;
+    item.style.cursor = enable ? 'move' : 'default';
+    item.querySelector('.drag-handle').style.display = enable ? 'block' : 'none';
+    item.querySelector('.btn-delete').style.display = enable ? 'none' : 'block'; // Hide delete during reorder
+  });
 }
 
 async function deleteOrganizer(id) {
