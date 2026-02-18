@@ -72,8 +72,7 @@ async function loadWinners() {
     const labels = { 1: '1st Place', 2: '2nd Place', 3: '3rd Place' };
 
     podium.innerHTML = winners.map((w) => `
-      <div class="winner-card rank-${w.rank} fade-up">
-        ${w.rank === 1 ? '<div class="winner-crown">👑</div>' : ''}
+      <div class="winner-card rank-${w.rank} fade-up" style="animation-delay: ${w.rank * 0.1}s">
         <span class="winner-medal">${medals[w.rank]}</span>
         <div class="winner-rank">${labels[w.rank]}</div>
         <div class="winner-team">${escHtml(w.team_name)}</div>
