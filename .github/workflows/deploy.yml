@@ -1,0 +1,23 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to recon2root VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 207.180.233.81
+          username: root
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /var/www/recon2root
+            git pull origin main
+            npm install --omit=dev
+            pm2 restart recon2root
+            echo "✅ Deployed successfully at $(date)"

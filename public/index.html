@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recon2Root — CTF Event by GDG On Campus MRCET</title>
+    <meta
+      name="description"
+      content="Recon2Root was a hands-on Capture The Flag competition organized by GDG On Campus MRCET on February 13, 2026. View winners, photos, videos and download your participation certificate."
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚩</text></svg>"
+    />
+  </head>
+  <body>
+    <!-- ── Navbar ── -->
+    <nav class="navbar" id="navbar">
+      <div class="container navbar-inner">
+        <a href="#" class="navbar-logo">
+          <div class="logo-icon">R2R</div>
+          <span>Recon2Root</span>
+        </a>
+        <ul class="navbar-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#winners">Winners</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#videos">Videos</a></li>
+          <li><a href="#certificates">Certificates</a></li>
+        </ul>
+        <button
+          class="navbar-mobile-btn"
+          id="mobileMenuBtn"
+          aria-label="Toggle menu"
+        >
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <section class="hero" id="home">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-eyebrow fade-up">
+            <div class="hero-eyebrow-line"></div>
+            <span class="hero-eyebrow-text"
+              >GDG On Campus MRCET · Feb 13, 2026</span
+            >
+          </div>
+          <h1 class="hero-title fade-up fade-up-delay-1">
+            <span class="highlight" id="heroTagline">Recon2Root</span><br />
+            CTF Event
+          </h1>
+          <p class="hero-subtitle fade-up fade-up-delay-2" id="heroSubtitle">
+            From Reconnaissance to Root — You Made It.
+          </p>
+          <div class="hero-stats fade-up fade-up-delay-3">
+            <div class="hero-stat">
+              <div class="hero-stat-value" id="statParticipants">1200+</div>
+              <div class="hero-stat-label">Participants</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-value" id="statChallenges">25+</div>
+              <div class="hero-stat-label">Challenges</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-value">5</div>
+              <div class="hero-stat-label">Categories</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-value">6h</div>
+              <div class="hero-stat-label">Duration</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-scroll">
+        <span>Scroll</span>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M12 5v14M5 12l7 7 7-7" />
+        </svg>
+      </div>
+    </section>
+
+    <!-- ── About ── -->
+    <section class="section about" id="about">
+      <div class="container">
+        <div class="about-grid">
+          <div>
+            <p class="section-label">About the Event</p>
+            <h2 class="section-title">
+              What was <span class="glow-text">Recon2Root?</span>
+            </h2>
+            <p class="about-text" id="aboutText">
+              Recon2Root was a hands-on Capture The Flag competition organized
+              by GDG On Campus MRCET on February 13, 2026. Participants tackled
+              real-world cybersecurity challenges spanning Web Hacking,
+              Cryptography, Digital Forensics, OSINT, and Reverse Engineering.
+              The event brought together over 1200 students in a competitive yet
+              collaborative atmosphere, pushing their technical thinking to the
+              limit.
+            </p>
+            <br />
+            <div
+              style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px"
+            >
+              <span class="tag">🌐 Web Hacking</span>
+              <span class="tag">🔐 Cryptography</span>
+              <span class="tag">🕵️ Forensics</span>
+              <span class="tag">🔍 OSINT</span>
+              <span class="tag">⚙️ Reverse Engineering</span>
+            </div>
+          </div>
+          <div class="about-stats">
+            <div class="about-stat-card fade-up">
+              <div class="about-stat-icon">👥</div>
+              <div class="about-stat-value" id="statParticipants2">1200+</div>
+              <div class="about-stat-label">Participants</div>
+            </div>
+            <div class="about-stat-card fade-up fade-up-delay-1">
+              <div class="about-stat-icon">🏆</div>
+              <div class="about-stat-value">3</div>
+              <div class="about-stat-label">Winning Teams</div>
+            </div>
+            <div class="about-stat-card fade-up fade-up-delay-2">
+              <div class="about-stat-icon">🧩</div>
+              <div class="about-stat-value" id="statChallenges2">25+</div>
+              <div class="about-stat-label">Challenges</div>
+            </div>
+            <div class="about-stat-card fade-up fade-up-delay-3">
+              <div class="about-stat-icon">📍</div>
+              <div
+                class="about-stat-value"
+                style="font-size: 1rem; line-height: 1.3"
+                id="statVenue"
+              >
+                MRCET<br />Hyderabad
+              </div>
+              <div class="about-stat-label">Venue</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Winners ── -->
+    <section class="section" id="winners">
+      <div class="container">
+        <div style="text-align: center; margin-bottom: 8px">
+          <p class="section-label">Leaderboard</p>
+          <h2 class="section-title">
+            🏆 Top <span class="glow-text">Winners</span>
+          </h2>
+          <p class="section-subtitle" style="margin: 0 auto">
+            Congratulations to the teams who conquered Recon2Root!
+          </p>
+        </div>
+        <div class="winners-podium" id="winnersPodium">
+          <!-- Populated by JS -->
+          <div class="winner-card rank-2 skeleton" style="height: 260px"></div>
+          <div class="winner-card rank-1 skeleton" style="height: 300px"></div>
+          <div class="winner-card rank-3 skeleton" style="height: 260px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Gallery ── -->
+    <section class="section gallery" id="gallery">
+      <div class="container">
+        <p class="section-label">Memories</p>
+        <h2 class="section-title">
+          Photo <span class="glow-text">Gallery</span>
+        </h2>
+        <div class="gallery-tabs" id="galleryTabs">
+          <button class="gallery-tab active" data-category="all">
+            All Photos
+          </button>
+          <button class="gallery-tab" data-category="ceremony">Ceremony</button>
+          <button class="gallery-tab" data-category="ctf-arena">
+            CTF Arena
+          </button>
+          <button class="gallery-tab" data-category="prize">
+            Prize Distribution
+          </button>
+          <button class="gallery-tab" data-category="general">General</button>
+        </div>
+        <div class="gallery-grid" id="galleryGrid">
+          <!-- Populated by JS -->
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+          <div class="gallery-item skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Videos ── -->
+    <section class="section" id="videos">
+      <div class="container">
+        <p class="section-label">Highlights</p>
+        <h2 class="section-title">
+          Event <span class="glow-text">Videos</span>
+        </h2>
+        <div class="videos-grid" id="videosGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Certificates ── -->
+    <section class="section certificate" id="certificates">
+      <div class="container" style="text-align: center">
+        <p class="section-label">Your Achievement</p>
+        <h2 class="section-title">
+          Download Your <span class="glow-text">Certificate</span>
+        </h2>
+        <p class="section-subtitle" style="margin: 0 auto 0">
+          Search your name below to download your participation certificate.
+        </p>
+        <div class="cert-search-box">
+          <div class="cert-input-wrap">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input
+              type="text"
+              class="cert-input"
+              id="certSearch"
+              placeholder="Type your full name..."
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+          <p class="cert-hint">Enter at least 2 characters to search</p>
+          <div class="cert-results" id="certResults"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-inner">
+          <div>
+            <div class="footer-brand">Recon<span>2Root</span></div>
+            <div class="footer-tagline">
+              GDG On Campus MRCET · Hyderabad, India
+            </div>
+          </div>
+          <div class="footer-social">
+            <a
+              href="#"
+              id="footerInstagram"
+              target="_blank"
+              rel="noopener"
+              aria-label="Instagram"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle
+                  cx="17.5"
+                  cy="6.5"
+                  r="1"
+                  fill="currentColor"
+                  stroke="none"
+                />
+              </svg>
+            </a>
+            <a
+              href="#"
+              id="footerLinkedin"
+              target="_blank"
+              rel="noopener"
+              aria-label="LinkedIn"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                />
+                <rect x="2" y="9" width="4" height="12" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-copy">
+          &copy; 2026 Recon2Root · GDG On Campus MRCET · All rights reserved.
+        </div>
+      </div>
+    </footer>
+
+    <!-- ── Lightbox ── -->
+    <div class="lightbox" id="lightbox">
+      <button class="lightbox-close" id="lightboxClose">&times;</button>
+      <img src="" alt="Gallery photo" id="lightboxImg" />
+    </div>
+
+    <script src="/js/main.js"></script>
+  </body>
+</html>
