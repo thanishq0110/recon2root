@@ -876,24 +876,26 @@ button {
 .organizers {
   background: var(--bg-primary);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 .organizers-list {
   display: block;
+  overflow: visible;
 }
 
 /* Grid */
 .org-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 60px 32px;
+  gap: 60px 28px;
   margin-bottom: 48px;
-  padding-top: 90px; /* room for avatar overflow */
+  padding-top: 80px;
 }
 
 /* Wrapper handles hover transform and avatar positioning */
 .org-card-wrap {
   position: relative;
+  overflow: visible;
   transition: transform 0.35s ease;
 }
 .org-card-wrap:hover {
