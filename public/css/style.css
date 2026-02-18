@@ -879,68 +879,41 @@ button {
 .organizers-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 24px;
 }
 
-/* Alternating profile card */
+/* Profile card — grid layout */
 .org-profile-card {
-  display: flex;
-  align-items: center;
-  gap: 0;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-areas: "photo info";
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--bg-card);
   transition: var(--transition);
-  margin-bottom: 24px;
-  padding: 36px 40px;
+  min-height: 300px;
 }
 .org-profile-card:hover {
   border-color: var(--border-glow);
   box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 .org-profile-card.reversed {
-  flex-direction: row-reverse;
-}
-.org-profile-card.reversed .org-photo-wrap {
-  order: 2;
-}
-.org-profile-card.reversed .org-info {
-  order: 1;
+  grid-template-columns: 1fr 280px;
+  grid-template-areas: "info photo";
 }
 .org-profile-card.faculty {
-  border-color: rgba(124, 58, 237, 0.2);
-  background: linear-gradient(
-    135deg,
-    rgba(124, 58, 237, 0.04) 0%,
-    var(--bg-card) 50%
-  );
+  border-color: rgba(124, 58, 237, 0.25);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, var(--bg-card) 60%);
 }
 
-/* Photo side — circle avatar */
+/* Photo column */
 .org-photo-wrap {
-  flex-shrink: 0;
-  width: 160px;
-  height: 160px;
-  border-radius: 16px;
+  grid-area: photo;
+  position: relative;
   overflow: hidden;
-  border: 3px solid rgba(0, 255, 136, 0.3);
-  box-shadow: 0 0 24px rgba(0, 255, 136, 0.1);
-  margin-right: 40px;
   background: var(--bg-secondary);
-}
-.org-profile-card.reversed .org-photo-wrap {
-  margin-right: 0;
-  margin-left: 40px;
-  order: 2;
-}
-.org-profile-card.reversed .org-info {
-  order: 1;
-}
-.org-profile-card.faculty .org-photo-wrap {
-  border-color: rgba(124, 58, 237, 0.4);
-  box-shadow: 0 0 24px rgba(124, 58, 237, 0.12);
 }
 .org-photo {
   width: 100%;
@@ -948,52 +921,46 @@ button {
   object-fit: cover;
   object-position: center top;
   display: block;
-  transition: transform 0.4s ease;
+  transition: transform 0.5s ease;
 }
 .org-profile-card:hover .org-photo {
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
 .org-photo-placeholder {
   width: 100%;
   height: 100%;
+  min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: "JetBrains Mono", monospace;
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: 700;
   color: var(--accent);
-  background: linear-gradient(
-    135deg,
-    var(--accent-dim) 0%,
-    var(--bg-secondary) 100%
-  );
+  background: linear-gradient(135deg, var(--accent-dim) 0%, var(--bg-secondary) 100%);
   letter-spacing: 0.05em;
 }
 .org-profile-card.faculty .org-photo-placeholder {
   color: #a78bfa;
-  background: linear-gradient(
-    135deg,
-    rgba(124, 58, 237, 0.15) 0%,
-    var(--bg-secondary) 100%
-  );
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, var(--bg-secondary) 100%);
 }
 
-/* Info side */
+/* Info column */
 .org-info {
-  flex: 1;
+  grid-area: info;
+  padding: 40px 48px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
 }
 .org-title-badge {
   display: inline-block;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: 100px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   background: var(--accent-dim);
   color: var(--accent);
@@ -1003,20 +970,21 @@ button {
 .org-profile-card.faculty .org-title-badge {
   background: rgba(124, 58, 237, 0.12);
   color: #a78bfa;
-  border-color: rgba(124, 58, 237, 0.2);
+  border-color: rgba(124, 58, 237, 0.25);
 }
 .org-name {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-primary);
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  margin: 0;
 }
 .org-desc {
   font-size: 0.95rem;
   color: var(--text-secondary);
-  line-height: 1.7;
-  max-width: 480px;
+  line-height: 1.75;
+  max-width: 520px;
 }
 
 /* Faculty divider */
@@ -1024,9 +992,9 @@ button {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 24px 0 32px;
+  margin: 16px 0 8px;
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-family: "JetBrains Mono", monospace;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1039,34 +1007,22 @@ button {
   background: var(--border);
 }
 
+/* Mobile */
 @media (max-width: 768px) {
   .org-profile-card,
   .org-profile-card.reversed {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 32px 24px;
+    grid-template-columns: 1fr;
+    grid-template-areas: "photo" "info";
+    min-height: unset;
   }
   .org-photo-wrap {
-    width: 120px;
-    height: 120px;
-    border-radius: 12px;
-    margin-right: 0 !important;
-    margin-left: 0 !important;
-    margin-bottom: 20px;
+    min-height: 240px;
   }
-  .org-profile-card.reversed .org-photo-wrap,
-  .org-profile-card.reversed .org-info {
-    order: unset;
-  }
-  .org-title-badge {
-    margin: 0 auto;
+  .org-info {
+    padding: 28px 24px;
   }
   .org-name {
-    font-size: 1.3rem;
-  }
-  .org-desc {
-    max-width: 100%;
+    font-size: 1.4rem;
   }
 }
 
