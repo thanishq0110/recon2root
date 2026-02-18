@@ -1122,10 +1122,14 @@ button {
 @media (max-width: 560px) {
   .org-grid {
     grid-template-columns: 1fr;
-    gap: 80px 0;
+    gap: 120px 0;
   }
   .org-card-wrap.highlight {
     transform: none;
+  }
+  /* On mobile, show 2nd item (Lead) first, then 1st item */
+  .org-card-wrap:nth-child(2) {
+    order: -1;
   }
 }
 
