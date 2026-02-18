@@ -21,6 +21,7 @@
       <button class="sidebar-link" data-panel="photos">📸 Photos</button>
       <button class="sidebar-link" data-panel="videos">🎬 Videos</button>
       <button class="sidebar-link" data-panel="certificates">📜 Certificates</button>
+      <button class="sidebar-link" data-panel="organizers">👥 Organizers</button>
       <button class="sidebar-link" data-panel="content">✏️ Site Content</button>
     </nav>
     <button class="sidebar-logout" id="logoutBtn">← Logout</button>
@@ -157,6 +158,41 @@
           <div class="stat-box"><div class="stat-val" id="certTotal">—</div><div class="stat-lbl">Total Certificates</div></div>
           <div class="stat-box"><div class="stat-val" id="certDownloads">—</div><div class="stat-lbl">Total Downloads</div></div>
         </div>
+      </div>
+    </div>
+
+    <!-- ── Organizers Panel ── -->
+    <div class="panel" id="panel-organizers">
+      <div class="panel-card">
+        <h2 class="panel-section-title">Add Organizer</h2>
+        <form id="orgForm" enctype="multipart/form-data">
+          <div class="form-row">
+            <label class="form-label">Full Name *</label>
+            <input type="text" class="form-input" id="orgName" placeholder="e.g. Thanishq K" required />
+          </div>
+          <div class="form-row">
+            <label class="form-label">Title / Role *</label>
+            <input type="text" class="form-input" id="orgTitle" placeholder="e.g. Lead, Technical Lead, Faculty Advisor" required />
+          </div>
+          <div class="form-row">
+            <label class="form-label">Description</label>
+            <textarea class="form-input" id="orgDesc" rows="3" placeholder="Short bio or role description (optional)" style="resize:vertical;"></textarea>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Photo (optional)</label>
+            <input type="file" class="form-input" id="orgPhoto" accept="image/*" />
+          </div>
+          <div class="form-row" style="display:flex;align-items:center;gap:10px;">
+            <input type="checkbox" id="orgIsFaculty" style="width:18px;height:18px;accent-color:var(--accent);" />
+            <label for="orgIsFaculty" class="form-label" style="margin:0;">Faculty Coordinator / Advisor</label>
+          </div>
+          <button type="submit" class="btn-save">➕ Add Organizer</button>
+        </form>
+        <div class="feedback" id="orgFeedback"></div>
+      </div>
+      <div class="panel-card">
+        <h2 class="panel-section-title">Manage Organizers</h2>
+        <div id="adminOrgList"><p class="panel-hint">Loading...</p></div>
       </div>
     </div>
 

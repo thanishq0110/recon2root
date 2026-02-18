@@ -42,6 +42,17 @@ CREATE TABLE IF NOT EXISTS certificates (
 
 CREATE INDEX IF NOT EXISTS idx_certificates_name ON certificates(participant_name_lower);
 
+CREATE TABLE IF NOT EXISTS organizers (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT DEFAULT '',
+  photo TEXT,
+  is_faculty INTEGER DEFAULT 0,
+  sort_order INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS content (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL,
@@ -50,11 +61,12 @@ CREATE TABLE IF NOT EXISTS content (
 
 INSERT OR IGNORE INTO content (key, value) VALUES
   ('hero_tagline', 'From Reconnaissance to Root — You Made It.'),
-  ('hero_subtitle', 'Thank you to all 1200+ participants who made Recon2Root an unforgettable experience.'),
-  ('about_text', 'Recon2Root was a hands-on Capture The Flag competition organized by GDG On Campus MRCET on February 13, 2026. Participants tackled real-world cybersecurity challenges spanning Web Hacking, Cryptography, Digital Forensics, OSINT, and Reverse Engineering. The event brought together over 1200 students in a competitive yet collaborative atmosphere, pushing their technical thinking to the limit.'),
+  ('hero_subtitle', 'Thank you to all 1000+ participants who made Recon2Root an unforgettable experience.'),
+  ('about_text', 'Recon2Root was a hands-on Capture The Flag competition organized by GDG On Campus MRCET on February 13, 2026. Participants tackled 20 real-world cybersecurity challenges spanning Web Hacking, Cryptography, Digital Forensics, OSINT, and Reverse Engineering. The event brought together over 1000 students in a competitive yet collaborative atmosphere, pushing their technical thinking to the limit.'),
   ('event_date', 'February 13, 2026'),
   ('event_venue', 'MRCET Campus, Hyderabad'),
-  ('total_participants', '1200+'),
-  ('total_challenges', '25+'),
+  ('total_participants', '1000+'),
+  ('total_challenges', '20'),
   ('instagram_url', 'https://instagram.com/gdgoncampusmrcet'),
   ('linkedin_url', 'https://linkedin.com/company/gdgoncampusmrcet');
+

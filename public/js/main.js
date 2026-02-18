@@ -263,6 +263,57 @@ async function searchCertificates(name) {
   }
 }
 
+// ── Organizers ────────────────────────────────────────────────
+async function loadOrganizers() {
+  const list = document.getElementById('organizersList');
+  if (!list) return;
+  try {
+    const res = await fetch(`${API}/api/organizers`);
+    const data = await res.json();
+    const organizers = Array.isArray(data) ? data : [];
+
+    if (organizers.length === 0) {
+      list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px">Team info coming soon!</p>';
+      return;
+    }
+
+    const team = organizers.filter(o => !o.is_faculty);
+    const faculty = organizers.filter(o => o.is_faculty);
+
+    const renderCard = (o, idx) => {
+      const isReversed = idx % 2 !== 0;
+      const initials = o.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      const photoHtml = o.photo
+        ? `<img src="/uploads/photos/${escHtml(o.photo)}" alt="${escHtml(o.name)}" class="org-photo" />`
+        : `<div class="org-photo-placeholder">${initials}</div>`;
+
+      return `
+        <div class="org-profile-card ${isReversed ? 'reversed' : ''} ${o.is_faculty ? 'faculty' : ''}">
+          <div class="org-photo-wrap">${photoHtml}</div>
+          <div class="org-info">
+            <div class="org-title-badge">${escHtml(o.title)}</div>
+            <h3 class="org-name">${escHtml(o.name)}</h3>
+            ${o.description ? `<p class="org-desc">${escHtml(o.description)}</p>` : ''}
+          </div>
+        </div>
+      `;
+    };
+
+    let html = team.map((o, i) => renderCard(o, i)).join('');
+
+    if (faculty.length > 0) {
+      html += `
+        <div class="faculty-divider"><span>Faculty Coordinators</span></div>
+        ${faculty.map((o, i) => renderCard(o, i)).join('')}
+      `;
+    }
+
+    list.innerHTML = html;
+  } catch (e) {
+    list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px">Could not load organizers.</p>';
+  }
+}
+
 // ── Intersection Observer for animations ─────────────────────
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -290,5 +341,5 @@ function escHtml(str) {
 // ── Init ──────────────────────────────────────────────────────
 (async function init() {
   await loadContent();
-  await Promise.all([loadWinners(), loadGallery(), loadVideos()]);
+  await Promise.all([loadWinners(), loadGallery(), loadVideos(), loadOrganizers()]);
 })();

@@ -12,6 +12,7 @@ const photosRoutes = require('./routes/photos');
 const videosRoutes = require('./routes/videos');
 const certificatesRoutes = require('./routes/certificates');
 const contentRoutes = require('./routes/content');
+const organizersRoutes = require('./routes/organizers');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,6 +38,7 @@ app.use('/api/photos', photosRoutes);
 app.use('/api/videos', videosRoutes);
 app.use('/api/certificates', certificatesRoutes);
 app.use('/api/content', contentRoutes);
+app.use('/api/organizers', organizersRoutes);
 
 // SPA fallback — serve index.html for all non-API routes
 app.get('*', (req, res) => {

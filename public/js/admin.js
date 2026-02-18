@@ -23,6 +23,7 @@ const panelTitles = {
   photos: '📸 Photos',
   videos: '🎬 Videos',
   certificates: '📜 Certificates',
+  organizers: '👥 Organizers',
   content: '✏️ Site Content',
 };
 
@@ -39,6 +40,7 @@ document.querySelectorAll('.sidebar-link').forEach((btn) => {
     if (panelId === 'content') loadContent();
     if (panelId === 'winners') loadWinners();
     if (panelId === 'certificates') loadCertStats();
+    if (panelId === 'organizers') loadAdminOrganizers();
   });
 });
 
@@ -387,6 +389,73 @@ document.getElementById('contentForm')?.addEventListener('submit', async (e) => 
     showFeedback('contentFeedback', 'Network error', 'error');
   }
 });
+
+// ── Organizers ───────────────────────────────────────────────
+document.getElementById('orgForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData();
+  formData.append('name', document.getElementById('orgName').value);
+  formData.append('title', document.getElementById('orgTitle').value);
+  formData.append('description', document.getElementById('orgDesc').value);
+  formData.append('is_faculty', document.getElementById('orgIsFaculty').checked ? 'true' : 'false');
+  const photo = document.getElementById('orgPhoto')?.files[0];
+  if (photo) formData.append('photo', photo);
+
+  try {
+    const res = await fetch(`${API}/api/organizers`, { method: 'POST', body: formData });
+    const data = await res.json();
+    if (res.ok) {
+      showFeedback('orgFeedback', '✅ Organizer added!');
+      document.getElementById('orgForm').reset();
+      loadAdminOrganizers();
+    } else {
+      showFeedback('orgFeedback', data.error || 'Failed', 'error');
+    }
+  } catch {
+    showFeedback('orgFeedback', 'Network error', 'error');
+  }
+});
+
+async function loadAdminOrganizers() {
+  const list = document.getElementById('adminOrgList');
+  if (!list) return;
+  try {
+    const res = await fetch(`${API}/api/organizers`);
+    const data = await res.json();
+    const organizers = Array.isArray(data) ? data : [];
+    if (organizers.length === 0) {
+      list.innerHTML = '<p class="panel-hint">No organizers added yet.</p>';
+      return;
+    }
+    list.innerHTML = organizers.map((o) => `
+      <div class="admin-video-item">
+        <div style="display:flex;align-items:center;gap:12px;">
+          ${o.photo ? `<img src="/uploads/photos/${escHtml(o.photo)}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;" />` : `<div style="width:44px;height:44px;border-radius:50%;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);font-size:0.8rem;">${escHtml(o.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())}</div>`}
+          <div>
+            <div class="admin-video-title">${escHtml(o.name)}</div>
+            <div class="admin-video-type">${escHtml(o.title)}${o.is_faculty ? ' · Faculty' : ''}</div>
+          </div>
+        </div>
+        <button class="btn-delete" data-id="${o.id}">Delete</button>
+      </div>
+    `).join('');
+    list.querySelectorAll('.btn-delete').forEach((btn) => {
+      btn.addEventListener('click', () => deleteOrganizer(btn.dataset.id));
+    });
+  } catch {
+    list.innerHTML = '<p class="panel-hint">Failed to load organizers.</p>';
+  }
+}
+
+async function deleteOrganizer(id) {
+  if (!confirm('Delete this organizer?')) return;
+  try {
+    await fetch(`${API}/api/organizers/${id}`, { method: 'DELETE' });
+    loadAdminOrganizers();
+  } catch {
+    alert('Failed to delete organizer');
+  }
+}
 
 // ── Utility ───────────────────────────────────────────────────
 function escHtml(str) {
