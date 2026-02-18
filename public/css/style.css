@@ -911,7 +911,11 @@ button {
 }
 .org-profile-card.faculty {
   border-color: rgba(124, 58, 237, 0.2);
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.04) 0%, var(--bg-card) 50%);
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.04) 0%,
+    var(--bg-card) 50%
+  );
 }
 
 /* Photo side — circle avatar */
@@ -919,7 +923,7 @@ button {
   flex-shrink: 0;
   width: 160px;
   height: 160px;
-  border-radius: 50%;
+  border-radius: 16px;
   overflow: hidden;
   border: 3px solid rgba(0, 255, 136, 0.3);
   box-shadow: 0 0 24px rgba(0, 255, 136, 0.1);
@@ -959,12 +963,20 @@ button {
   font-size: 2rem;
   font-weight: 700;
   color: var(--accent);
-  background: linear-gradient(135deg, var(--accent-dim) 0%, var(--bg-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--accent-dim) 0%,
+    var(--bg-secondary) 100%
+  );
   letter-spacing: 0.05em;
 }
 .org-profile-card.faculty .org-photo-placeholder {
   color: #a78bfa;
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, var(--bg-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.15) 0%,
+    var(--bg-secondary) 100%
+  );
 }
 
 /* Info side */
@@ -1038,6 +1050,7 @@ button {
   .org-photo-wrap {
     width: 120px;
     height: 120px;
+    border-radius: 12px;
     margin-right: 0 !important;
     margin-left: 0 !important;
     margin-bottom: 20px;
