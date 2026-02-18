@@ -888,7 +888,23 @@ button {
   grid-template-columns: repeat(3, 1fr);
   gap: 60px 32px;
   margin-bottom: 48px;
-  padding-top: 80px;
+  padding-top: 90px; /* room for avatar overflow */
+}
+
+/* Wrapper handles hover transform and avatar positioning */
+.org-card-wrap {
+  position: relative;
+  transition: transform 0.35s ease;
+}
+.org-card-wrap:hover {
+  transform: translateY(-10px) scale(1.03);
+}
+.org-card-wrap.highlight {
+  transform: scale(1.06);
+  z-index: 1;
+}
+.org-card-wrap.highlight:hover {
+  transform: translateY(-10px) scale(1.09);
 }
 
 /* ── Card ── */
@@ -899,80 +915,73 @@ button {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(56, 189, 248, 0.25);
   border-radius: 28px;
-  padding: 80px 28px 32px;
+  padding: 90px 28px 32px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
-  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
-  --notch-r: 70px;
-  -webkit-mask-image: radial-gradient(circle var(--notch-r) at 50% 0px, transparent 99%, black 100%);
-  mask-image: radial-gradient(circle var(--notch-r) at 50% 0px, transparent 99%, black 100%);
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+  /* NO mask-image here — avatar is outside this element */
 }
-.org-card:hover {
-  transform: translateY(-10px) scale(1.03);
+.org-card-wrap:hover .org-card {
   border-color: rgba(56, 189, 248, 0.65);
   box-shadow: 0 0 40px rgba(56, 189, 248, 0.35);
 }
 
 /* Center Lead highlight */
-.org-card.highlight {
+.org-card-wrap.highlight .org-card {
   border-color: rgba(34, 197, 94, 0.55);
   box-shadow: 0 0 48px rgba(34, 197, 94, 0.4);
-  transform: scale(1.06);
-  z-index: 1;
 }
-.org-card.highlight:hover {
-  transform: translateY(-10px) scale(1.09);
+.org-card-wrap.highlight:hover .org-card {
   border-color: rgba(34, 197, 94, 0.85);
   box-shadow: 0 0 70px rgba(34, 197, 94, 0.6);
 }
 
 /* Faculty */
-.org-card.faculty {
+.org-card-wrap.faculty .org-card {
   border-color: rgba(167, 139, 250, 0.3);
   box-shadow: 0 0 20px rgba(167, 139, 250, 0.1);
 }
-.org-card.faculty:hover {
-  transform: translateY(-10px) scale(1.03);
+.org-card-wrap.faculty:hover .org-card {
   border-color: rgba(167, 139, 250, 0.65);
   box-shadow: 0 0 40px rgba(167, 139, 250, 0.3);
 }
 
-/* ── Avatar ── */
+/* ── Avatar — lives in .org-card-wrap, above the card ── */
 .org-card-avatar {
   position: absolute;
-  top: -60px;
+  top: -70px;
   left: 50%;
   transform: translateX(-50%);
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   overflow: hidden;
   border: 5px solid #0b1220;
-  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3), 0 8px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35), 0 8px 32px rgba(0, 0, 0, 0.6);
   background: #1a2a3a;
   transition: box-shadow 0.35s ease;
   z-index: 2;
 }
-.org-card:hover .org-card-avatar {
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.7), 0 0 28px rgba(56, 189, 248, 0.5);
+.org-card-wrap:hover .org-card-avatar {
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.8), 0 0 32px rgba(56, 189, 248, 0.5);
 }
-.org-card.highlight .org-card-avatar {
-  width: 130px;
-  height: 130px;
-  top: -65px;
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.6), 0 0 32px rgba(34, 197, 94, 0.4);
+.org-card-wrap.highlight .org-card-avatar {
+  width: 150px;
+  height: 150px;
+  top: -75px;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.7), 0 0 36px rgba(34, 197, 94, 0.45);
 }
-.org-card.highlight:hover .org-card-avatar {
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.9), 0 0 40px rgba(34, 197, 94, 0.6);
+.org-card-wrap.highlight:hover .org-card-avatar {
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 1), 0 0 48px rgba(34, 197, 94, 0.65);
 }
-.org-card.faculty .org-card-avatar {
-  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.3), 0 8px 32px rgba(0, 0, 0, 0.5);
+.org-card-wrap.faculty .org-card-avatar {
+  box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.35), 0 8px 32px rgba(0, 0, 0, 0.6);
 }
-.org-card.faculty:hover .org-card-avatar {
-  box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.7), 0 0 28px rgba(167, 139, 250, 0.4);
+.org-card-wrap.faculty:hover .org-card-avatar {
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.8), 0 0 32px rgba(167, 139, 250, 0.4);
 }
 .org-card-avatar img {
   width: 100%;
@@ -988,16 +997,16 @@ button {
   align-items: center;
   justify-content: center;
   font-family: "JetBrains Mono", monospace;
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: #38bdf8;
   background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, #0d1b2a 100%);
 }
-.org-card.highlight .org-card-avatar-placeholder {
+.org-card-wrap.highlight .org-card-avatar-placeholder {
   color: #22c55e;
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, #0d1b2a 100%);
 }
-.org-card.faculty .org-card-avatar-placeholder {
+.org-card-wrap.faculty .org-card-avatar-placeholder {
   color: #a78bfa;
   background: linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, #0d1b2a 100%);
 }
@@ -1010,7 +1019,7 @@ button {
   margin-bottom: 10px;
   line-height: 1.2;
 }
-.org-card.highlight .org-card-name {
+.org-card-wrap.highlight .org-card-name {
   font-size: 1.35rem;
 }
 .org-card-badge {
@@ -1025,12 +1034,12 @@ button {
   margin-bottom: 14px;
   letter-spacing: 0.02em;
 }
-.org-card.highlight .org-card-badge {
+.org-card-wrap.highlight .org-card-badge {
   color: #22c55e;
   border-color: rgba(34, 197, 94, 0.3);
   background: rgba(34, 197, 94, 0.08);
 }
-.org-card.faculty .org-card-badge {
+.org-card-wrap.faculty .org-card-badge {
   color: #a78bfa;
   border-color: rgba(167, 139, 250, 0.25);
   background: rgba(167, 139, 250, 0.08);
@@ -1071,10 +1080,10 @@ button {
   color: #38bdf8;
   transform: translateY(-2px);
 }
-.org-card.highlight .org-card-socials a:hover {
+.org-card-wrap.highlight .org-card-socials a:hover {
   color: #22c55e;
 }
-.org-card.faculty .org-card-socials a:hover {
+.org-card-wrap.faculty .org-card-socials a:hover {
   color: #a78bfa;
 }
 
@@ -1104,7 +1113,7 @@ button {
     grid-template-columns: repeat(2, 1fr);
     gap: 60px 24px;
   }
-  .org-card.highlight {
+  .org-card-wrap.highlight {
     transform: scale(1.03);
   }
 }
@@ -1113,7 +1122,7 @@ button {
     grid-template-columns: 1fr;
     gap: 80px 0;
   }
-  .org-card.highlight {
+  .org-card-wrap.highlight {
     transform: none;
   }
 }
