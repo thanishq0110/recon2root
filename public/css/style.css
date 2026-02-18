@@ -884,8 +884,8 @@ button {
 
 /* Alternating profile card */
 .org-profile-card {
-  display: grid;
-  grid-template-columns: 320px 1fr;
+  display: flex;
+  align-items: center;
   gap: 0;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -893,6 +893,7 @@ button {
   background: var(--bg-card);
   transition: var(--transition);
   margin-bottom: 24px;
+  padding: 36px 40px;
 }
 .org-profile-card:hover {
   border-color: var(--border-glow);
@@ -900,7 +901,7 @@ button {
   transform: translateY(-2px);
 }
 .org-profile-card.reversed {
-  grid-template-columns: 1fr 320px;
+  flex-direction: row-reverse;
 }
 .org-profile-card.reversed .org-photo-wrap {
   order: 2;
@@ -913,32 +914,49 @@ button {
   background: linear-gradient(135deg, rgba(124, 58, 237, 0.04) 0%, var(--bg-card) 50%);
 }
 
-/* Photo side */
+/* Photo side — circle avatar */
 .org-photo-wrap {
-  position: relative;
-  background: var(--bg-secondary);
-  min-height: 220px;
+  flex-shrink: 0;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
   overflow: hidden;
+  border: 3px solid rgba(0, 255, 136, 0.3);
+  box-shadow: 0 0 24px rgba(0, 255, 136, 0.1);
+  margin-right: 40px;
+  background: var(--bg-secondary);
+}
+.org-profile-card.reversed .org-photo-wrap {
+  margin-right: 0;
+  margin-left: 40px;
+  order: 2;
+}
+.org-profile-card.reversed .org-info {
+  order: 1;
+}
+.org-profile-card.faculty .org-photo-wrap {
+  border-color: rgba(124, 58, 237, 0.4);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.12);
 }
 .org-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
   display: block;
   transition: transform 0.4s ease;
 }
 .org-profile-card:hover .org-photo {
-  transform: scale(1.04);
+  transform: scale(1.06);
 }
 .org-photo-placeholder {
   width: 100%;
   height: 100%;
-  min-height: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: "JetBrains Mono", monospace;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--accent);
   background: linear-gradient(135deg, var(--accent-dim) 0%, var(--bg-secondary) 100%);
@@ -951,7 +969,7 @@ button {
 
 /* Info side */
 .org-info {
-  padding: 36px 40px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1012,20 +1030,30 @@ button {
 @media (max-width: 768px) {
   .org-profile-card,
   .org-profile-card.reversed {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 32px 24px;
+  }
+  .org-photo-wrap {
+    width: 120px;
+    height: 120px;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    margin-bottom: 20px;
   }
   .org-profile-card.reversed .org-photo-wrap,
   .org-profile-card.reversed .org-info {
     order: unset;
   }
-  .org-photo-wrap {
-    min-height: 200px;
-  }
-  .org-info {
-    padding: 24px;
+  .org-title-badge {
+    margin: 0 auto;
   }
   .org-name {
     font-size: 1.3rem;
+  }
+  .org-desc {
+    max-width: 100%;
   }
 }
 
