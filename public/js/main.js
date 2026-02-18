@@ -280,7 +280,7 @@ async function loadOrganizers() {
     const team = organizers.filter(o => !o.is_faculty);
     const faculty = organizers.filter(o => o.is_faculty);
 
-    const renderCard = (o) => {
+    const renderCard = (o, idx, isCenter) => {
       const initials = o.name.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
       const avatarHtml = o.photo
         ? `<img src="/uploads/photos/${escHtml(o.photo)}" alt="${escHtml(o.name)}" />`
@@ -293,8 +293,10 @@ async function loadOrganizers() {
         o.github ? `<a href="${escHtml(o.github)}" target="_blank" rel="noopener" title="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>` : '',
       ].filter(Boolean).join('');
 
+      const classes = ['org-card', o.is_faculty ? 'faculty' : '', isCenter ? 'highlight' : ''].filter(Boolean).join(' ');
+
       return `
-        <div class="org-card ${o.is_faculty ? 'faculty' : ''}">
+        <div class="${classes}">
           <div class="org-card-avatar">${avatarHtml}</div>
           <div class="org-card-name">${escHtml(o.name)}</div>
           <div class="org-card-badge">${escHtml(o.title)}</div>
@@ -304,12 +306,14 @@ async function loadOrganizers() {
       `;
     };
 
-    let html = `<div class="org-grid">${team.map(o => renderCard(o)).join('')}</div>`;
+    // Center card = index 4 in a 9-card 3x3 grid (row 2, col 2)
+    const centerIdx = team.length === 9 ? 4 : Math.floor(team.length / 2);
+    let html = `<div class="org-grid">${team.map((o, i) => renderCard(o, i, i === centerIdx)).join('')}</div>`;
 
     if (faculty.length > 0) {
       html += `
         <div class="faculty-divider"><span>Faculty Coordinators</span></div>
-        <div class="org-grid">${faculty.map(o => renderCard(o)).join('')}</div>
+        <div class="org-grid">${faculty.map((o, i) => renderCard(o, i, false)).join('')}</div>
       `;
     }
 
