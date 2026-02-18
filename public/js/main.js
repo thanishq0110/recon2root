@@ -287,16 +287,16 @@ async function loadOrganizers() {
       const initials = nameParts.map(w => w[0]).join('').slice(0, 2).toUpperCase();
       const photoHtml = o.photo
         ? `<img src="/uploads/photos/${escHtml(o.photo)}" alt="${escHtml(o.name)}" />`
-        : `<div class="org-card-photo-placeholder">${initials}</div>`;
+        : `<div class="org-item-photo-placeholder">${initials}</div>`;
 
       return `
-        <div class="org-card ${o.is_faculty ? 'faculty' : ''}">
-          <div class="org-card-photo">${photoHtml}</div>
-          <div class="org-card-info">
-            <div class="org-card-firstname">${escHtml(firstName)}</div>
-            ${lastName ? `<div class="org-card-lastname">${escHtml(lastName)}</div>` : ''}
-            <div class="org-card-role">${escHtml(o.title)}</div>
-            ${o.description ? `<div class="org-card-desc">${escHtml(o.description)}</div>` : ''}
+        <div class="org-item ${o.is_faculty ? 'faculty' : ''}">
+          <div class="org-item-photo">${photoHtml}</div>
+          <div class="org-item-info">
+            <div class="org-item-firstname">${escHtml(firstName)}</div>
+            ${lastName ? `<div class="org-item-lastname">${escHtml(lastName)}</div>` : ''}
+            <div class="org-item-role">${escHtml(o.title)}</div>
+            ${o.description ? `<div class="org-item-desc">${escHtml(o.description)}</div>` : ''}
           </div>
         </div>
       `;
