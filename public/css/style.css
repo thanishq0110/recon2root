@@ -882,8 +882,174 @@ button {
 .org-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 40px 32px;
+  gap: 32px;
   margin-bottom: 48px;
+  /* Extra top padding so overflowing avatar has room */
+  padding-top: 60px;
+}
+
+/* Card */
+.org-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 70px 28px 28px;
+  text-align: center;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.org-card:hover {
+  border-color: var(--border-glow);
+  box-shadow: 0 8px 40px rgba(0, 255, 136, 0.08);
+  transform: translateY(-4px);
+}
+.org-card.faculty:hover {
+  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow: 0 8px 40px rgba(124, 58, 237, 0.1);
+}
+
+/* Circular avatar overflowing the top */
+.org-card-avatar {
+  position: absolute;
+  top: -52px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--bg-card);
+  box-shadow: 0 0 0 2px var(--border), 0 4px 20px rgba(0,0,0,0.4);
+  background: var(--bg-secondary);
+  transition: box-shadow 0.3s ease;
+}
+.org-card:hover .org-card-avatar {
+  box-shadow: 0 0 0 2px var(--accent), 0 4px 24px rgba(0, 255, 136, 0.2);
+}
+.org-card.faculty:hover .org-card-avatar {
+  box-shadow: 0 0 0 2px #a78bfa, 0 4px 24px rgba(124, 58, 237, 0.2);
+}
+.org-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+.org-card-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: linear-gradient(135deg, var(--accent-dim) 0%, var(--bg-secondary) 100%);
+}
+.org-card.faculty .org-card-avatar-placeholder {
+  color: #a78bfa;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, var(--bg-secondary) 100%);
+}
+
+/* Card content */
+.org-card-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.org-card-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 100px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
+  letter-spacing: 0.02em;
+}
+.org-card.faculty .org-card-badge {
+  background: rgba(124, 58, 237, 0.1);
+  color: #a78bfa;
+  border-color: rgba(124, 58, 237, 0.25);
+}
+.org-card-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Social icons row */
+.org-card-socials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  width: 100%;
+}
+.org-card-socials a {
+  color: var(--text-muted);
+  font-size: 1rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+.org-card-socials a:hover {
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+.org-card.faculty .org-card-socials a:hover {
+  color: #a78bfa;
+}
+
+/* Faculty divider */
+.faculty-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0 8px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.faculty-divider::before,
+.faculty-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .org-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .org-grid {
+    grid-template-columns: 1fr;
+    gap: 80px 0;
+  }
 }
 
 /* Each person item: photo left, text right */

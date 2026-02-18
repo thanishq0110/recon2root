@@ -50,6 +50,9 @@ CREATE TABLE IF NOT EXISTS organizers (
   photo TEXT,
   is_faculty INTEGER DEFAULT 0,
   sort_order INTEGER DEFAULT 0,
+  linkedin TEXT,
+  github TEXT,
+  twitter TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

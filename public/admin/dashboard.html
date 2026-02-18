@@ -1,253 +1,415 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard · Admin · Recon2Root</title>
-  <meta name="robots" content="noindex, nofollow" />
-  <link rel="stylesheet" href="/css/style.css" />
-  <link rel="stylesheet" href="/css/admin.css" />
-</head>
-<body class="admin-body">
-
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-icon">R2R</div>
-      <span>Admin</span>
-    </div>
-    <nav class="sidebar-nav">
-      <button class="sidebar-link active" data-panel="winners">🏆 Winners</button>
-      <button class="sidebar-link" data-panel="photos">📸 Photos</button>
-      <button class="sidebar-link" data-panel="videos">🎬 Videos</button>
-      <button class="sidebar-link" data-panel="certificates">📜 Certificates</button>
-      <button class="sidebar-link" data-panel="organizers">👥 Organizers</button>
-      <button class="sidebar-link" data-panel="content">✏️ Site Content</button>
-    </nav>
-    <button class="sidebar-logout" id="logoutBtn">← Logout</button>
-  </aside>
-
-  <!-- Main -->
-  <main class="admin-main">
-    <div class="admin-topbar">
-      <h1 class="admin-page-title" id="pageTitle">Winners</h1>
-      <div class="admin-user">👤 Admin</div>
-    </div>
-
-    <!-- ── Winners Panel ── -->
-    <div class="panel active" id="panel-winners">
-      <div class="panel-card">
-        <h2 class="panel-section-title">Set Top 3 Winners</h2>
-        <p class="panel-hint">Fill in team details for each rank and save.</p>
-        <form id="winnersForm">
-          <div id="winnersFields">
-            <!-- Rendered by JS -->
-          </div>
-          <button type="submit" class="btn-save">💾 Save Winners</button>
-        </form>
-        <div class="feedback" id="winnersFeedback"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard · Admin · Recon2Root</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">R2R</div>
+        <span>Admin</span>
       </div>
-    </div>
+      <nav class="sidebar-nav">
+        <button class="sidebar-link active" data-panel="winners">
+          🏆 Winners
+        </button>
+        <button class="sidebar-link" data-panel="photos">📸 Photos</button>
+        <button class="sidebar-link" data-panel="videos">🎬 Videos</button>
+        <button class="sidebar-link" data-panel="certificates">
+          📜 Certificates
+        </button>
+        <button class="sidebar-link" data-panel="organizers">
+          👥 Organizers
+        </button>
+        <button class="sidebar-link" data-panel="content">
+          ✏️ Site Content
+        </button>
+      </nav>
+      <button class="sidebar-logout" id="logoutBtn">← Logout</button>
+    </aside>
 
-    <!-- ── Photos Panel ── -->
-    <div class="panel" id="panel-photos">
-      <div class="panel-card">
-        <h2 class="panel-section-title">Upload Photos</h2>
-        <form id="photoUploadForm">
-          <div class="form-row">
-            <label class="form-label">Category</label>
-            <select class="form-input" id="photoCategory">
-              <option value="general">General</option>
-              <option value="ceremony">Ceremony</option>
-              <option value="ctf-arena">CTF Arena</option>
-              <option value="prize">Prize Distribution</option>
-            </select>
-          </div>
-          <div class="drop-zone" id="photoDropZone">
-            <div class="drop-zone-icon">📸</div>
-            <div class="drop-zone-text">Drag & drop photos here or <span class="drop-zone-link">browse</span></div>
-            <div class="drop-zone-hint">JPG, PNG, WebP · Max 20MB each · Up to 50 at once</div>
-            <input type="file" id="photoFiles" accept="image/*" multiple hidden />
-          </div>
-          <div id="photoPreview" class="upload-preview"></div>
-          <button type="submit" class="btn-save" id="photoUploadBtn" disabled>📤 Upload Photos</button>
-        </form>
-        <div class="feedback" id="photoFeedback"></div>
+    <!-- Main -->
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h1 class="admin-page-title" id="pageTitle">Winners</h1>
+        <div class="admin-user">👤 Admin</div>
       </div>
-      <div class="panel-card">
-        <h2 class="panel-section-title">Manage Photos</h2>
-        <div class="admin-gallery-grid" id="adminGalleryGrid">
-          <p class="panel-hint">Loading...</p>
+
+      <!-- ── Winners Panel ── -->
+      <div class="panel active" id="panel-winners">
+        <div class="panel-card">
+          <h2 class="panel-section-title">Set Top 3 Winners</h2>
+          <p class="panel-hint">Fill in team details for each rank and save.</p>
+          <form id="winnersForm">
+            <div id="winnersFields">
+              <!-- Rendered by JS -->
+            </div>
+            <button type="submit" class="btn-save">💾 Save Winners</button>
+          </form>
+          <div class="feedback" id="winnersFeedback"></div>
         </div>
       </div>
-    </div>
 
-    <!-- ── Videos Panel ── -->
-    <div class="panel" id="panel-videos">
-      <div class="panel-card">
-        <h2 class="panel-section-title">Add Video</h2>
-        <form id="videoForm">
-          <div class="form-row">
-            <label class="form-label">Title</label>
-            <input type="text" class="form-input" id="videoTitle" placeholder="e.g. Event Highlights" required />
+      <!-- ── Photos Panel ── -->
+      <div class="panel" id="panel-photos">
+        <div class="panel-card">
+          <h2 class="panel-section-title">Upload Photos</h2>
+          <form id="photoUploadForm">
+            <div class="form-row">
+              <label class="form-label">Category</label>
+              <select class="form-input" id="photoCategory">
+                <option value="general">General</option>
+                <option value="ceremony">Ceremony</option>
+                <option value="ctf-arena">CTF Arena</option>
+                <option value="prize">Prize Distribution</option>
+              </select>
+            </div>
+            <div class="drop-zone" id="photoDropZone">
+              <div class="drop-zone-icon">📸</div>
+              <div class="drop-zone-text">
+                Drag & drop photos here or
+                <span class="drop-zone-link">browse</span>
+              </div>
+              <div class="drop-zone-hint">
+                JPG, PNG, WebP · Max 20MB each · Up to 50 at once
+              </div>
+              <input
+                type="file"
+                id="photoFiles"
+                accept="image/*"
+                multiple
+                hidden
+              />
+            </div>
+            <div id="photoPreview" class="upload-preview"></div>
+            <button type="submit" class="btn-save" id="photoUploadBtn" disabled>
+              📤 Upload Photos
+            </button>
+          </form>
+          <div class="feedback" id="photoFeedback"></div>
+        </div>
+        <div class="panel-card">
+          <h2 class="panel-section-title">Manage Photos</h2>
+          <div class="admin-gallery-grid" id="adminGalleryGrid">
+            <p class="panel-hint">Loading...</p>
           </div>
-          <div class="form-row">
-            <label class="form-label">Type</label>
-            <select class="form-input" id="videoType">
-              <option value="youtube">YouTube URL</option>
-              <option value="upload">Upload MP4</option>
-            </select>
-          </div>
-          <div class="form-row" id="ytUrlRow">
-            <label class="form-label">YouTube URL</label>
-            <input type="url" class="form-input" id="ytUrl" placeholder="https://youtube.com/watch?v=..." />
-          </div>
-          <div class="form-row" id="videoFileRow" style="display:none;">
-            <label class="form-label">Video File</label>
-            <input type="file" class="form-input" id="videoFile" accept="video/mp4,video/webm" />
-          </div>
-          <button type="submit" class="btn-save">📤 Add Video</button>
-        </form>
-        <div class="feedback" id="videoFeedback"></div>
-      </div>
-      <div class="panel-card">
-        <h2 class="panel-section-title">Manage Videos</h2>
-        <div id="adminVideosList"><p class="panel-hint">Loading...</p></div>
-      </div>
-    </div>
-
-    <!-- ── Certificates Panel ── -->
-    <div class="panel" id="panel-certificates">
-      <div class="panel-card">
-        <h2 class="panel-section-title">Bulk Upload Certificates</h2>
-        <p class="panel-hint">
-          Upload a CSV file and all PDF certificates together.<br/>
-          <strong>CSV format:</strong> <code>Full Name,filename.pdf</code> (one per line, no header)
-        </p>
-        <form id="certBulkForm">
-          <div class="form-row">
-            <label class="form-label">CSV File</label>
-            <input type="file" class="form-input" id="certCsv" accept=".csv,.txt" required />
-          </div>
-          <div class="form-row">
-            <label class="form-label">PDF Certificates (select all at once)</label>
-            <input type="file" class="form-input" id="certPdfs" accept=".pdf" multiple required />
-          </div>
-          <button type="submit" class="btn-save" id="certBulkBtn">📤 Upload All Certificates</button>
-        </form>
-        <div class="feedback" id="certBulkFeedback"></div>
-      </div>
-      <div class="panel-card">
-        <h2 class="panel-section-title">Single Certificate Upload</h2>
-        <form id="certSingleForm">
-          <div class="form-row">
-            <label class="form-label">Participant Name</label>
-            <input type="text" class="form-input" id="certName" placeholder="Full name as registered" required />
-          </div>
-          <div class="form-row">
-            <label class="form-label">PDF Certificate</label>
-            <input type="file" class="form-input" id="certPdf" accept=".pdf" required />
-          </div>
-          <button type="submit" class="btn-save">📤 Upload Certificate</button>
-        </form>
-        <div class="feedback" id="certSingleFeedback"></div>
-      </div>
-      <div class="panel-card">
-        <h2 class="panel-section-title">Stats</h2>
-        <div id="certStats" class="stats-grid">
-          <div class="stat-box"><div class="stat-val" id="certTotal">—</div><div class="stat-lbl">Total Certificates</div></div>
-          <div class="stat-box"><div class="stat-val" id="certDownloads">—</div><div class="stat-lbl">Total Downloads</div></div>
         </div>
       </div>
-    </div>
 
-    <!-- ── Organizers Panel ── -->
-    <div class="panel" id="panel-organizers">
-      <div class="panel-card">
-        <h2 class="panel-section-title">Add Organizer</h2>
-        <form id="orgForm" enctype="multipart/form-data">
-          <div class="form-row">
-            <label class="form-label">Full Name *</label>
-            <input type="text" class="form-input" id="orgName" placeholder="e.g. Thanishq K" required />
-          </div>
-          <div class="form-row">
-            <label class="form-label">Title / Role *</label>
-            <input type="text" class="form-input" id="orgTitle" placeholder="e.g. Lead, Technical Lead, Faculty Advisor" required />
-          </div>
-          <div class="form-row">
-            <label class="form-label">Description</label>
-            <textarea class="form-input" id="orgDesc" rows="3" placeholder="Short bio or role description (optional)" style="resize:vertical;"></textarea>
-          </div>
-          <div class="form-row">
-            <label class="form-label">Photo (optional)</label>
-            <input type="file" class="form-input" id="orgPhoto" accept="image/*" />
-          </div>
-          <div class="form-row" style="display:flex;align-items:center;gap:10px;">
-            <input type="checkbox" id="orgIsFaculty" style="width:18px;height:18px;accent-color:var(--accent);" />
-            <label for="orgIsFaculty" class="form-label" style="margin:0;">Faculty Coordinator / Advisor</label>
-          </div>
-          <button type="submit" class="btn-save">➕ Add Organizer</button>
-        </form>
-        <div class="feedback" id="orgFeedback"></div>
-      </div>
-      <div class="panel-card">
-        <h2 class="panel-section-title">Manage Organizers</h2>
-        <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
-          <button id="toggleReorderBtn" class="btn-save" style="background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);">⇅ Reorder</button>
+      <!-- ── Videos Panel ── -->
+      <div class="panel" id="panel-videos">
+        <div class="panel-card">
+          <h2 class="panel-section-title">Add Video</h2>
+          <form id="videoForm">
+            <div class="form-row">
+              <label class="form-label">Title</label>
+              <input
+                type="text"
+                class="form-input"
+                id="videoTitle"
+                placeholder="e.g. Event Highlights"
+                required
+              />
+            </div>
+            <div class="form-row">
+              <label class="form-label">Type</label>
+              <select class="form-input" id="videoType">
+                <option value="youtube">YouTube URL</option>
+                <option value="upload">Upload MP4</option>
+              </select>
+            </div>
+            <div class="form-row" id="ytUrlRow">
+              <label class="form-label">YouTube URL</label>
+              <input
+                type="url"
+                class="form-input"
+                id="ytUrl"
+                placeholder="https://youtube.com/watch?v=..."
+              />
+            </div>
+            <div class="form-row" id="videoFileRow" style="display: none">
+              <label class="form-label">Video File</label>
+              <input
+                type="file"
+                class="form-input"
+                id="videoFile"
+                accept="video/mp4,video/webm"
+              />
+            </div>
+            <button type="submit" class="btn-save">📤 Add Video</button>
+          </form>
+          <div class="feedback" id="videoFeedback"></div>
         </div>
-        <div id="adminOrgList"><p class="panel-hint">Loading...</p></div>
-        <div id="reorderControls" style="display:none;margin-top:16px;text-align:right;">
-          <button id="saveReorderBtn" class="btn-save">💾 Save Order</button>
-          <button id="cancelReorderBtn" class="btn-save" style="background:transparent;border:1px solid var(--border);">Cancel</button>
+        <div class="panel-card">
+          <h2 class="panel-section-title">Manage Videos</h2>
+          <div id="adminVideosList"><p class="panel-hint">Loading...</p></div>
         </div>
       </div>
-    </div>
 
-    <!-- ── Content Panel ── -->
-    <div class="panel" id="panel-content">
-      <div class="panel-card">
-        <h2 class="panel-section-title">Edit Site Content</h2>
-        <form id="contentForm">
-          <div class="form-row">
-            <label class="form-label">Hero Tagline</label>
-            <input type="text" class="form-input" id="c_hero_tagline" />
+      <!-- ── Certificates Panel ── -->
+      <div class="panel" id="panel-certificates">
+        <div class="panel-card">
+          <h2 class="panel-section-title">Bulk Upload Certificates</h2>
+          <p class="panel-hint">
+            Upload a CSV file and all PDF certificates together.<br />
+            <strong>CSV format:</strong>
+            <code>Full Name,filename.pdf</code> (one per line, no header)
+          </p>
+          <form id="certBulkForm">
+            <div class="form-row">
+              <label class="form-label">CSV File</label>
+              <input
+                type="file"
+                class="form-input"
+                id="certCsv"
+                accept=".csv,.txt"
+                required
+              />
+            </div>
+            <div class="form-row">
+              <label class="form-label"
+                >PDF Certificates (select all at once)</label
+              >
+              <input
+                type="file"
+                class="form-input"
+                id="certPdfs"
+                accept=".pdf"
+                multiple
+                required
+              />
+            </div>
+            <button type="submit" class="btn-save" id="certBulkBtn">
+              📤 Upload All Certificates
+            </button>
+          </form>
+          <div class="feedback" id="certBulkFeedback"></div>
+        </div>
+        <div class="panel-card">
+          <h2 class="panel-section-title">Single Certificate Upload</h2>
+          <form id="certSingleForm">
+            <div class="form-row">
+              <label class="form-label">Participant Name</label>
+              <input
+                type="text"
+                class="form-input"
+                id="certName"
+                placeholder="Full name as registered"
+                required
+              />
+            </div>
+            <div class="form-row">
+              <label class="form-label">PDF Certificate</label>
+              <input
+                type="file"
+                class="form-input"
+                id="certPdf"
+                accept=".pdf"
+                required
+              />
+            </div>
+            <button type="submit" class="btn-save">
+              📤 Upload Certificate
+            </button>
+          </form>
+          <div class="feedback" id="certSingleFeedback"></div>
+        </div>
+        <div class="panel-card">
+          <h2 class="panel-section-title">Stats</h2>
+          <div id="certStats" class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-val" id="certTotal">—</div>
+              <div class="stat-lbl">Total Certificates</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="certDownloads">—</div>
+              <div class="stat-lbl">Total Downloads</div>
+            </div>
           </div>
-          <div class="form-row">
-            <label class="form-label">Hero Subtitle</label>
-            <input type="text" class="form-input" id="c_hero_subtitle" />
-          </div>
-          <div class="form-row">
-            <label class="form-label">About Text</label>
-            <textarea class="form-input" id="c_about_text" rows="5" style="resize:vertical;"></textarea>
-          </div>
-          <div class="form-row">
-            <label class="form-label">Total Participants</label>
-            <input type="text" class="form-input" id="c_total_participants" />
-          </div>
-          <div class="form-row">
-            <label class="form-label">Total Challenges</label>
-            <input type="text" class="form-input" id="c_total_challenges" />
-          </div>
-          <div class="form-row">
-            <label class="form-label">Event Venue</label>
-            <input type="text" class="form-input" id="c_event_venue" />
-          </div>
-          <div class="form-row">
-            <label class="form-label">Instagram URL</label>
-            <input type="url" class="form-input" id="c_instagram_url" />
-          </div>
-          <div class="form-row">
-            <label class="form-label">LinkedIn URL</label>
-            <input type="url" class="form-input" id="c_linkedin_url" />
-          </div>
-          <button type="submit" class="btn-save">💾 Save Content</button>
-        </form>
-        <div class="feedback" id="contentFeedback"></div>
+        </div>
       </div>
-    </div>
 
-  </main>
+      <!-- ── Organizers Panel ── -->
+      <div class="panel" id="panel-organizers">
+        <div class="panel-card">
+          <h2 class="panel-section-title">Add Organizer</h2>
+          <form id="orgForm" enctype="multipart/form-data">
+            <div class="form-row">
+              <label class="form-label">Full Name *</label>
+              <input
+                type="text"
+                class="form-input"
+                id="orgName"
+                placeholder="e.g. Thanishq K"
+                required
+              />
+            </div>
+            <div class="form-row">
+              <label class="form-label">Title / Role *</label>
+              <input
+                type="text"
+                class="form-input"
+                id="orgTitle"
+                placeholder="e.g. Lead, Technical Lead, Faculty Advisor"
+                required
+              />
+            </div>
+            <div class="form-row">
+              <label class="form-label">Description</label>
+              <textarea
+                class="form-input"
+                id="orgDesc"
+                rows="3"
+                placeholder="Short bio or role description (optional)"
+                style="resize: vertical"
+              ></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Photo (optional)</label>
+              <input
+                type="file"
+                class="form-input"
+                id="orgPhoto"
+                accept="image/*"
+              />
+            </div>
+            <div
+              class="form-row"
+              style="display: flex; align-items: center; gap: 10px"
+            >
+              <input
+                type="checkbox"
+                id="orgIsFaculty"
+                style="width: 18px; height: 18px; accent-color: var(--accent)"
+              />
+              <label for="orgIsFaculty" class="form-label" style="margin: 0"
+                >Faculty Coordinator / Advisor</label
+              >
+            </div>
+            <div class="form-row">
+              <label class="form-label">LinkedIn URL (optional)</label>
+              <input
+                type="url"
+                class="form-input"
+                id="orgLinkedin"
+                placeholder="https://linkedin.com/in/username"
+              />
+            </div>
+            <div class="form-row">
+              <label class="form-label">GitHub URL (optional)</label>
+              <input
+                type="url"
+                class="form-input"
+                id="orgGithub"
+                placeholder="https://github.com/username"
+              />
+            </div>
+            <div class="form-row">
+              <label class="form-label">Twitter / X URL (optional)</label>
+              <input
+                type="url"
+                class="form-input"
+                id="orgTwitter"
+                placeholder="https://x.com/username"
+              />
+            </div>
+            <button type="submit" class="btn-save">➕ Add Organizer</button>
+          </form>
+          <div class="feedback" id="orgFeedback"></div>
+        </div>
+        <div class="panel-card">
+          <h2 class="panel-section-title">Manage Organizers</h2>
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              margin-bottom: 12px;
+            "
+          >
+            <button
+              id="toggleReorderBtn"
+              class="btn-save"
+              style="
+                background: var(--bg-secondary);
+                color: var(--text-primary);
+                border: 1px solid var(--border);
+              "
+            >
+              ⇅ Reorder
+            </button>
+          </div>
+          <div id="adminOrgList"><p class="panel-hint">Loading...</p></div>
+          <div
+            id="reorderControls"
+            style="display: none; margin-top: 16px; text-align: right"
+          >
+            <button id="saveReorderBtn" class="btn-save">💾 Save Order</button>
+            <button
+              id="cancelReorderBtn"
+              class="btn-save"
+              style="background: transparent; border: 1px solid var(--border)"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
 
-  <script src="/js/admin.js"></script>
-</body>
+      <!-- ── Content Panel ── -->
+      <div class="panel" id="panel-content">
+        <div class="panel-card">
+          <h2 class="panel-section-title">Edit Site Content</h2>
+          <form id="contentForm">
+            <div class="form-row">
+              <label class="form-label">Hero Tagline</label>
+              <input type="text" class="form-input" id="c_hero_tagline" />
+            </div>
+            <div class="form-row">
+              <label class="form-label">Hero Subtitle</label>
+              <input type="text" class="form-input" id="c_hero_subtitle" />
+            </div>
+            <div class="form-row">
+              <label class="form-label">About Text</label>
+              <textarea
+                class="form-input"
+                id="c_about_text"
+                rows="5"
+                style="resize: vertical"
+              ></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Total Participants</label>
+              <input type="text" class="form-input" id="c_total_participants" />
+            </div>
+            <div class="form-row">
+              <label class="form-label">Total Challenges</label>
+              <input type="text" class="form-input" id="c_total_challenges" />
+            </div>
+            <div class="form-row">
+              <label class="form-label">Event Venue</label>
+              <input type="text" class="form-input" id="c_event_venue" />
+            </div>
+            <div class="form-row">
+              <label class="form-label">Instagram URL</label>
+              <input type="url" class="form-input" id="c_instagram_url" />
+            </div>
+            <div class="form-row">
+              <label class="form-label">LinkedIn URL</label>
+              <input type="url" class="form-input" id="c_linkedin_url" />
+            </div>
+            <button type="submit" class="btn-save">💾 Save Content</button>
+          </form>
+          <div class="feedback" id="contentFeedback"></div>
+        </div>
+      </div>
+    </main>
+
+    <script src="/js/admin.js"></script>
+  </body>
 </html>

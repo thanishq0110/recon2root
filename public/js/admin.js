@@ -398,6 +398,12 @@ document.getElementById('orgForm')?.addEventListener('submit', async (e) => {
   formData.append('title', document.getElementById('orgTitle').value);
   formData.append('description', document.getElementById('orgDesc').value);
   formData.append('is_faculty', document.getElementById('orgIsFaculty').checked ? 'true' : 'false');
+  const linkedin = document.getElementById('orgLinkedin')?.value;
+  const github = document.getElementById('orgGithub')?.value;
+  const twitter = document.getElementById('orgTwitter')?.value;
+  if (linkedin) formData.append('linkedin', linkedin);
+  if (github) formData.append('github', github);
+  if (twitter) formData.append('twitter', twitter);
   const photo = document.getElementById('orgPhoto')?.files[0];
   if (photo) formData.append('photo', photo);
 
