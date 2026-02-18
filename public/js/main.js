@@ -280,7 +280,7 @@ async function loadOrganizers() {
     const team = organizers.filter(o => !o.is_faculty);
     const faculty = organizers.filter(o => o.is_faculty);
 
-    const renderCard = (o, idx, isCenter) => {
+    const renderCard = (o) => {
       const initials = o.name.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
       const avatarHtml = o.photo
         ? `<img src="/uploads/photos/${escHtml(o.photo)}" alt="${escHtml(o.name)}" />`
@@ -294,8 +294,8 @@ async function loadOrganizers() {
         o.facebook ? `<a href="${escHtml(o.facebook)}" target="_blank" rel="noopener" title="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>` : '',
       ].filter(Boolean).join('');
 
-      // Wrapper carries the variant classes; avatar lives here (outside the masked card)
-      const wrapClasses = ['org-card-wrap', o.is_faculty ? 'faculty' : '', isCenter ? 'highlight' : ''].filter(Boolean).join(' ');
+      // Use is_lead property for highlight style
+      const wrapClasses = ['org-card-wrap', o.is_faculty ? 'faculty' : '', o.is_lead ? 'highlight' : ''].filter(Boolean).join(' ');
 
       return `
         <div class="${wrapClasses}">
@@ -310,14 +310,12 @@ async function loadOrganizers() {
       `;
     };
 
-    // Center card = index 4 in a 9-card 3x3 grid (row 2, col 2)
-    const centerIdx = team.length === 9 ? 4 : Math.floor(team.length / 2);
-    let html = `<div class="org-grid">${team.map((o, i) => renderCard(o, i, i === centerIdx)).join('')}</div>`;
+    let html = `<div class="org-grid">${team.map(o => renderCard(o)).join('')}</div>`;
 
     if (faculty.length > 0) {
       html += `
         <div class="faculty-divider"><span>Faculty Coordinators</span></div>
-        <div class="org-grid">${faculty.map((o, i) => renderCard(o, i, false)).join('')}</div>
+        <div class="org-grid">${faculty.map(o => renderCard(o)).join('')}</div>
       `;
     }
 

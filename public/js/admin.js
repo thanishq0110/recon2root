@@ -400,6 +400,7 @@ document.getElementById('orgForm')?.addEventListener('submit', async (e) => {
   formData.append('title', document.getElementById('orgTitle').value);
   formData.append('description', document.getElementById('orgDesc').value);
   formData.append('is_faculty', document.getElementById('orgIsFaculty').checked ? 'true' : 'false');
+  formData.append('is_lead', document.getElementById('orgIsLead').checked ? 'true' : 'false');
   
   const linkedin = document.getElementById('orgLinkedin')?.value;
   const github = document.getElementById('orgGithub')?.value;
@@ -460,6 +461,7 @@ window.editOrganizer = async (id) => {
     document.getElementById('orgTitle').value = org.title;
     document.getElementById('orgDesc').value = org.description || '';
     document.getElementById('orgIsFaculty').checked = !!org.is_faculty;
+    document.getElementById('orgIsLead').checked = !!org.is_lead;
     document.getElementById('orgLinkedin').value = org.linkedin || '';
     document.getElementById('orgGithub').value = org.github || '';
     document.getElementById('orgTwitter').value = org.twitter || '';

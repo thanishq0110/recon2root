@@ -1127,8 +1127,8 @@ button {
   .org-card-wrap.highlight {
     transform: none;
   }
-  /* On mobile, show 2nd item (Lead) first, then 1st item */
-  .org-card-wrap:nth-child(2) {
+  /* On mobile, show Lead profile first */
+  .org-card-wrap.highlight {
     order: -1;
   }
 }

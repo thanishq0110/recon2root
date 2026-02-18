@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 
 // POST /api/organizers — admin: create
 router.post('/', auth, uploadPhoto.single('photo'), (req, res) => {
-  const { name, title, description, is_faculty, linkedin, github, twitter, instagram, facebook } = req.body;
+  const { name, title, description, is_faculty, is_lead, linkedin, github, twitter, instagram, facebook } = req.body;
   if (!name || !title) return res.status(400).json({ error: 'Name and title are required' });
 
   const id = uuidv4();
@@ -24,10 +24,10 @@ router.post('/', auth, uploadPhoto.single('photo'), (req, res) => {
   const sort_order = (maxOrder?.m ?? 0) + 1;
 
   db.prepare(
-    'INSERT INTO organizers (id, name, title, description, photo, is_faculty, sort_order, linkedin, github, twitter, instagram, facebook) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-  ).run(id, name, title, description || '', photo, is_faculty === 'true' ? 1 : 0, sort_order, linkedin || null, github || null, twitter || null, instagram || null, facebook || null);
+    'INSERT INTO organizers (id, name, title, description, photo, is_faculty, is_lead, sort_order, linkedin, github, twitter, instagram, facebook) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run(id, name, title, description || '', photo, is_faculty === 'true' ? 1 : 0, is_lead === 'true' ? 1 : 0, sort_order, linkedin || null, github || null, twitter || null, instagram || null, facebook || null);
 
-  res.json({ id, name, title, description, photo, is_faculty, sort_order, linkedin, github, twitter, instagram, facebook });
+  res.json({ id, name, title, description, photo, is_faculty, is_lead, sort_order, linkedin, github, twitter, instagram, facebook });
 });
 
 // POST /api/organizers/reorder — admin
@@ -54,7 +54,7 @@ router.post('/reorder', auth, (req, res) => {
 // PUT /api/organizers/:id — admin: update
 router.put('/:id', auth, uploadPhoto.single('photo'), (req, res) => {
   const { id } = req.params;
-  const { name, title, description, is_faculty, sort_order, linkedin, github, twitter, instagram, facebook } = req.body;
+  const { name, title, description, is_faculty, is_lead, sort_order, linkedin, github, twitter, instagram, facebook } = req.body;
 
   const existing = db.prepare('SELECT * FROM organizers WHERE id = ?').get(id);
   if (!existing) return res.status(404).json({ error: 'Organizer not found' });
@@ -69,13 +69,14 @@ router.put('/:id', auth, uploadPhoto.single('photo'), (req, res) => {
   }
 
   db.prepare(
-    'UPDATE organizers SET name=?, title=?, description=?, photo=?, is_faculty=?, sort_order=?, linkedin=?, github=?, twitter=?, instagram=?, facebook=? WHERE id=?'
+    'UPDATE organizers SET name=?, title=?, description=?, photo=?, is_faculty=?, is_lead=?, sort_order=?, linkedin=?, github=?, twitter=?, instagram=?, facebook=? WHERE id=?'
   ).run(
     name ?? existing.name,
     title ?? existing.title,
     description ?? existing.description,
     photo,
     is_faculty !== undefined ? (is_faculty === 'true' ? 1 : 0) : existing.is_faculty,
+    is_lead !== undefined ? (is_lead === 'true' ? 1 : 0) : (existing.is_lead || 0),
     sort_order ?? existing.sort_order,
     linkedin !== undefined ? linkedin || null : existing.linkedin,
     github !== undefined ? github || null : existing.github,
