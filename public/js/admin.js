@@ -37,7 +37,10 @@ document.querySelectorAll('.sidebar-link').forEach((btn) => {
     document.getElementById('pageTitle').textContent = panelTitles[panelId] || panelId;
     if (panelId === 'photos') loadAdminPhotos();
     if (panelId === 'videos') loadAdminVideos();
-    if (panelId === 'content') loadContent();
+    if (panelId === 'content') {
+      loadContent();
+      loadSections(); // Load section reordering UI
+    }
     if (panelId === 'winners') loadWinners();
     if (panelId === 'certificates') loadCertStats();
     if (panelId === 'organizers') loadAdminOrganizers();
@@ -492,14 +495,15 @@ window.editOrganizer = async (id) => {
 };
 
 async function loadAdminOrganizers() {
-  const list = document.getElementById('adminOrgList');
-  if (!list) return;
+  const container = document.getElementById('orgList');
+  container.innerHTML = '<p class="panel-hint">Loading...</p>';
+  if (!container) return;
   try {
     const res = await fetch(`${API}/api/organizers`);
     const data = await res.json();
     const organizers = Array.isArray(data) ? data : [];
     if (organizers.length === 0) {
-      list.innerHTML = '<p class="panel-hint">No organizers added yet.</p>';
+      container.innerHTML = '<p class="panel-hint">No organizers added yet.</p>';
       return;
     }
     list.innerHTML = organizers.map((o) => `
@@ -647,3 +651,89 @@ function escHtml(str) {
 
 // ── Init ──────────────────────────────────────────────────────
 loadWinners();
+
+// ── Section Reordering ──
+let currentSectionOrder = ['winners', 'gallery', 'videos', 'certificates', 'organizers'];
+const sectionNames = {
+  winners: '🏆 Winners',
+  gallery: '📸 Photos',
+  videos: '🎬 Videos',
+  certificates: '📜 Certificates',
+  organizers: '👥 Organizers'
+};
+
+async function loadSections() {
+  const container = document.getElementById('sectionList');
+  if (!container) return;
+  
+  try {
+    const res = await fetch(`${API}/api/content`);
+    const { content } = await res.json();
+    if (content.homepage_section_order) {
+      try {
+        currentSectionOrder = JSON.parse(content.homepage_section_order);
+      } catch (e) {
+        console.error('Invalid section order', e);
+      }
+    }
+    renderSectionList();
+  } catch (e) {
+    console.error(e);
+    container.innerHTML = '<p class="panel-hint">Failed to load sections.</p>';
+  }
+}
+
+function renderSectionList() {
+  const container = document.getElementById('sectionList');
+  if (!container) return;
+  
+  container.innerHTML = currentSectionOrder.map((sectionId, index) => {
+    return `
+      <div class="section-item">
+        <span class="section-name">${sectionNames[sectionId] || sectionId}</span>
+        <div class="section-controls">
+          <button class="btn-move" onclick="moveSection(${index}, -1)" ${index === 0 ? 'disabled' : ''}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </button>
+          <button class="btn-move" onclick="moveSection(${index}, 1)" ${index === currentSectionOrder.length - 1 ? 'disabled' : ''}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.moveSection = (index, direction) => {
+  const newIndex = index + direction;
+  if (newIndex < 0 || newIndex >= currentSectionOrder.length) return;
+  
+  const item = currentSectionOrder.splice(index, 1)[0];
+  currentSectionOrder.splice(newIndex, 0, item);
+  renderSectionList();
+};
+
+document.getElementById('btnSaveSections')?.addEventListener('click', async () => {
+  const btn = document.getElementById('btnSaveSections');
+  const originalText = btn.textContent;
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`${API}/api/content`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ updates: { homepage_section_order: JSON.stringify(currentSectionOrder) } }),
+    });
+    if (res.ok) {
+      showFeedback('sectionFeedback', 'Layout saved successfully!');
+    } else {
+      showFeedback('sectionFeedback', 'Failed to save layout', 'error');
+    }
+  } catch (e) {
+    showFeedback('sectionFeedback', 'Error saving layout', 'error');
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+});

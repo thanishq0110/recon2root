@@ -283,21 +283,28 @@
               class="form-row"
               style="display: flex; align-items: center; gap: 20px"
             >
-              <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px">
                 <input
                   type="checkbox"
                   id="orgIsFaculty"
                   style="width: 18px; height: 18px; accent-color: var(--accent)"
                 />
-                <label for="orgIsFaculty" class="form-label" style="margin: 0">Faculty Coordinator</label>
+                <label for="orgIsFaculty" class="form-label" style="margin: 0"
+                  >Faculty Coordinator</label
+                >
               </div>
-              <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px">
                 <input
                   type="checkbox"
                   id="orgIsLead"
                   style="width: 18px; height: 18px; accent-color: #22c55e"
                 />
-                <label for="orgIsLead" class="form-label" style="margin: 0; color: #22c55e; font-weight: 600;">Is Team Lead?</label>
+                <label
+                  for="orgIsLead"
+                  class="form-label"
+                  style="margin: 0; color: #22c55e; font-weight: 600"
+                  >Is Team Lead?</label
+                >
               </div>
             </div>
             <div class="form-row">
@@ -349,6 +356,8 @@
           </form>
           <div class="feedback" id="orgFeedback"></div>
         </div>
+
+
         <div class="panel-card">
           <h2 class="panel-section-title">Manage Organizers</h2>
           <div
@@ -389,6 +398,16 @@
 
       <!-- ── Content Panel ── -->
       <div class="panel" id="panel-content">
+        <div class="panel-card">
+          <h2 class="panel-section-title">Homepage Layout</h2>
+          <p class="panel-hint">Reorder sections as they appear on the site.</p>
+          <div id="sectionList" class="section-list">
+            <!-- Populated by JS -->
+          </div>
+          <button id="btnSaveSections" class="btn-save" style="margin-top:20px;">💾 Save Layout</button>
+          <div class="feedback" id="sectionFeedback"></div>
+        </div>
+
         <div class="panel-card">
           <h2 class="panel-section-title">Edit Site Content</h2>
           <form id="contentForm">

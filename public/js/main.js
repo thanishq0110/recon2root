@@ -46,6 +46,20 @@ async function loadContent() {
     const li = document.getElementById('footerLinkedin');
     if (ig && content.instagram_url) ig.href = content.instagram_url;
     if (li && content.linkedin_url) li.href = content.linkedin_url;
+
+    // Handle section reordering
+    if (content.homepage_section_order) {
+      try {
+        const order = JSON.parse(content.homepage_section_order);
+        const footer = document.querySelector('footer');
+        if (footer && footer.parentNode) {
+          order.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) footer.parentNode.insertBefore(el, footer);
+          });
+        }
+      } catch (e) { console.error('Reorder error', e); }
+    }
   } catch (e) {
     console.warn('Content load failed:', e);
   }
