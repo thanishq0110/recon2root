@@ -100,25 +100,48 @@ async function loadWinners() {
 }
 
 // ── Gallery ───────────────────────────────────────────────────
+let galleryPhotos = [];
 let currentCategory = 'all';
+let galleryPage = 1;
+const GALLERY_PER_PAGE = 6;
 
-async function loadGallery(category = 'all') {
+async function loadGallery() {
   const grid = document.getElementById('galleryGrid');
   grid.innerHTML = Array(6).fill('<div class="gallery-item skeleton"></div>').join('');
 
   try {
-    const url = category === 'all'
-      ? `${API}/api/photos`
-      : `${API}/api/photos?category=${encodeURIComponent(category)}`;
-    const res = await fetch(url);
+    const res = await fetch(`${API}/api/photos`);
     const { photos } = await res.json();
+    galleryPhotos = photos || [];
+    renderGallery();
+  } catch (e) {
+    grid.innerHTML = '<div class="gallery-empty">Could not load photos.</div>';
+  }
+}
 
-    if (!photos || photos.length === 0) {
-      grid.innerHTML = '<div class="gallery-empty">📷 Photos coming soon!</div>';
-      return;
-    }
-
-    grid.innerHTML = photos.map((p) => `
+function renderGallery() {
+  const grid = document.getElementById('galleryGrid');
+  const pagination = document.getElementById('publicGalleryPagination');
+  
+  // 1. Filter
+  const filtered = currentCategory === 'all' 
+    ? galleryPhotos 
+    : galleryPhotos.filter(p => p.category === currentCategory);
+    
+  // 2. Paginate
+  const totalPages = Math.ceil(filtered.length / GALLERY_PER_PAGE) || 1;
+  if (galleryPage > totalPages) galleryPage = totalPages;
+  if (galleryPage < 1) galleryPage = 1;
+  
+  const start = (galleryPage - 1) * GALLERY_PER_PAGE;
+  const pageItems = filtered.slice(start, start + GALLERY_PER_PAGE);
+  
+  // 3. Render
+  if (pageItems.length === 0) {
+    grid.innerHTML = '<div class="gallery-empty">📷 Photos coming soon!</div>';
+    pagination.style.display = 'none';
+  } else {
+    grid.innerHTML = pageItems.map((p) => `
       <div class="gallery-item" data-src="/uploads/photos/${p.filename}">
         <img
           src="/uploads/photos/${p.filename}"
@@ -136,18 +159,34 @@ async function loadGallery(category = 'all') {
     grid.querySelectorAll('.gallery-item').forEach((item) => {
       item.addEventListener('click', () => openLightbox(item.dataset.src));
     });
-  } catch (e) {
-    grid.innerHTML = '<div class="gallery-empty">Could not load photos.</div>';
+
+    // 4. Update Pagination UI
+    pagination.style.display = 'flex';
+    document.getElementById('galleryPageInfo').textContent = `Page ${galleryPage} of ${totalPages}`;
+    document.getElementById('btnPrevGallery').disabled = galleryPage === 1;
+    document.getElementById('btnNextGallery').disabled = galleryPage === totalPages;
   }
+  
+  // Update Tabs UI
+  document.querySelectorAll('#galleryTabs .gallery-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.category === currentCategory);
+  });
 }
+
+window.changeGalleryPage = (delta) => {
+  galleryPage += delta;
+  const gallerySection = document.getElementById('gallery');
+  if (gallerySection) gallerySection.scrollIntoView({ behavior: 'smooth' });
+  renderGallery();
+};
 
 document.getElementById('galleryTabs')?.addEventListener('click', (e) => {
   const tab = e.target.closest('.gallery-tab');
   if (!tab) return;
-  document.querySelectorAll('.gallery-tab').forEach((t) => t.classList.remove('active'));
-  tab.classList.add('active');
+  
   currentCategory = tab.dataset.category;
-  loadGallery(currentCategory);
+  galleryPage = 1;
+  renderGallery();
 });
 
 // ── Lightbox ──────────────────────────────────────────────────

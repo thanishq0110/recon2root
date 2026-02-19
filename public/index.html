@@ -206,6 +206,11 @@
           <div class="gallery-item skeleton"></div>
           <div class="gallery-item skeleton"></div>
         </div>
+        <div class="pagination" id="publicGalleryPagination" style="display:none;align-items:center;justify-content:center;gap:12px;margin-top:40px;">
+          <button class="btn-secondary" id="btnPrevGallery" style="padding:8px 16px;" onclick="changeGalleryPage(-1)">Previous</button>
+          <span id="galleryPageInfo" style="font-size:0.9rem;color:var(--text-muted);font-weight:600;">Page 1</span>
+          <button class="btn-secondary" id="btnNextGallery" style="padding:8px 16px;" onclick="changeGalleryPage(1)">Next</button>
+        </div>
       </div>
     </section>
 
