@@ -175,6 +175,7 @@ document.getElementById('photoUploadForm')?.addEventListener('submit', async (e)
 
 // ── Photos: State ──
 let allPhotos = [];
+let photoCategories = ['general']; // Default
 let currentPhotoCategory = 'all';
 let currentPhotoPage = 1;
 const PHOTOS_PER_PAGE = 20;
@@ -184,7 +185,10 @@ async function loadAdminPhotos() {
   grid.innerHTML = '<p class="panel-hint">Loading...</p>';
 
   try {
-    // Only fetch if empty (or force reload strategies, but for now fetch all)
+    // Load categories first
+    await loadCategories();
+    
+    // Load photos
     const res = await fetch(`${API}/api/photos`);
     const { photos } = await res.json();
     allPhotos = photos || [];
@@ -194,6 +198,89 @@ async function loadAdminPhotos() {
     grid.innerHTML = '<p class="panel-hint">Failed to load photos.</p>';
   }
 }
+
+async function loadCategories() {
+  try {
+    const res = await fetch(`${API}/api/content`);
+    const { content } = await res.json();
+    if (content.photo_categories) {
+      photoCategories = JSON.parse(content.photo_categories);
+    } else {
+      photoCategories = ['general', 'ceremony', 'ctf-arena', 'prize']; // Fallback/Init
+    }
+  } catch (e) {
+    console.error('Failed to load categories', e);
+  }
+  renderCategoryUI();
+}
+
+function renderCategoryUI() {
+  // 1. Sidebar List (Add/Remove)
+  const list = document.getElementById('categoryList');
+  if (list) {
+    list.innerHTML = photoCategories.map(cat => `
+      <div style="background:var(--bg-secondary);padding:6px 12px;border-radius:20px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);font-size:0.85rem;">
+        <span>${escHtml(cat)}</span>
+        ${cat !== 'general' ? `<span onclick="deleteCategory('${cat}')" style="cursor:pointer;color:var(--text-muted);font-weight:bold;">&times;</span>` : ''}
+      </div>
+    `).join('');
+  }
+
+  // 2. Upload Select
+  const select = document.getElementById('photoCategory');
+  if (select) {
+    select.innerHTML = photoCategories.map(cat => `<option value="${cat}">${escHtml(cat)}</option>`).join('');
+  }
+
+  // 3. Filter Tabs
+  const tabsContainer = document.getElementById('adminPhotoTabs');
+  if (tabsContainer) {
+    tabsContainer.innerHTML = `
+      <button class="gallery-tab ${currentPhotoCategory === 'all' ? 'active' : ''}" data-category="all" onclick="filterAdminPhotos('all')">All</button>
+      ${photoCategories.map(cat => `
+        <button class="gallery-tab ${currentPhotoCategory === cat ? 'active' : ''}" data-category="${cat}" onclick="filterAdminPhotos('${cat}')">${escHtml(cat)}</button>
+      `).join('')}
+    `;
+  }
+}
+
+async function addCategory() {
+  const input = document.getElementById('newCategoryInput');
+  const val = input.value.trim().toLowerCase().replace(/\s+/g, '-');
+  if (!val) return;
+  if (photoCategories.includes(val)) {
+    alert('Category already exists');
+    return;
+  }
+  
+  photoCategories.push(val);
+  await saveCategories();
+  input.value = '';
+  renderCategoryUI();
+}
+
+async function deleteCategory(cat) {
+  if (!confirm(`Delete category "${cat}"? Photos will remain but lose this category tag.`)) return;
+  photoCategories = photoCategories.filter(c => c !== cat);
+  if (currentPhotoCategory === cat) currentPhotoCategory = 'all';
+  await saveCategories();
+  renderCategoryUI();
+  renderPhotos(); // Re-render to update UI if needed
+}
+
+async function saveCategories() {
+  try {
+    await fetch(`${API}/api/content`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photo_categories: JSON.stringify(photoCategories) })
+    });
+  } catch (e) {
+    alert('Failed to save categories');
+  }
+}
+
+document.getElementById('btnAddCategory')?.addEventListener('click', addCategory);
 
 function renderPhotos() {
   const grid = document.getElementById('adminGalleryGrid');
@@ -237,7 +324,7 @@ function renderPhotos() {
   document.getElementById('btnNextPhotos').disabled = currentPhotoPage === totalPages;
   pagination.style.display = filtered.length > 0 ? 'flex' : 'none';
   
-  // 5. Update Tabs UI
+  // 5. Update Tabs UI (Handled in renderCategoryUI mostly, but active state here too)
   document.querySelectorAll('.gallery-tab').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.category === currentPhotoCategory);
   });
@@ -247,6 +334,7 @@ window.filterAdminPhotos = (cat) => {
   currentPhotoCategory = cat;
   currentPhotoPage = 1;
   renderPhotos();
+  renderCategoryUI(); // Ensure active tab is updated
 };
 
 window.changePhotoPage = (delta) => {

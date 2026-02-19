@@ -101,6 +101,7 @@ async function loadWinners() {
 
 // ── Gallery ───────────────────────────────────────────────────
 let galleryPhotos = [];
+let galleryCategories = ['general']; 
 let currentCategory = 'all';
 let galleryPage = 1;
 const GALLERY_PER_PAGE = 6;
@@ -110,6 +111,21 @@ async function loadGallery() {
   grid.innerHTML = Array(6).fill('<div class="gallery-item skeleton"></div>').join('');
 
   try {
+    // 1. Fetch Categories
+    const contentRes = await fetch(`${API}/api/content`);
+    const { content } = await contentRes.json();
+    if (content.photo_categories) {
+      try {
+        galleryCategories = JSON.parse(content.photo_categories);
+      } catch (e) {
+        galleryCategories = ['general', 'ceremony', 'ctf-arena', 'prize'];
+      }
+    } else {
+        galleryCategories = ['general', 'ceremony', 'ctf-arena', 'prize'];
+    }
+    renderGalleryTabs();
+
+    // 2. Fetch Photos
     const res = await fetch(`${API}/api/photos`);
     const { photos } = await res.json();
     galleryPhotos = photos || [];
@@ -118,6 +134,21 @@ async function loadGallery() {
     grid.innerHTML = '<div class="gallery-empty">Could not load photos.</div>';
   }
 }
+
+function renderGalleryTabs() {
+  const container = document.getElementById('galleryTabs');
+  if (!container) return;
+  
+  container.innerHTML = `
+    <button class="gallery-tab ${currentCategory === 'all' ? 'active' : ''}" data-category="all">All Photos</button>
+    ${galleryCategories.map(cat => `
+      <button class="gallery-tab ${currentCategory === cat ? 'active' : ''}" data-category="${cat}" style="text-transform:capitalize;">
+        ${escHtml(cat.replace(/-/g, ' '))}
+      </button>
+    `).join('')}
+  `;
+}
+
 
 function renderGallery() {
   const grid = document.getElementById('galleryGrid');

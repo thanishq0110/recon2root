@@ -59,15 +59,21 @@
       <!-- ── Photos Panel ── -->
       <div class="panel" id="panel-photos">
         <div class="panel-card">
+          <h2 class="panel-section-title">Manage Categories</h2>
+          <div style="display:flex;gap:12px;margin-bottom:16px;">
+            <input type="text" id="newCategoryInput" class="form-input" placeholder="New Category Name" />
+            <button class="btn-save" id="btnAddCategory" style="white-space:nowrap;">Add Category</button>
+          </div>
+          <div id="categoryList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+
+        <div class="panel-card">
           <h2 class="panel-section-title">Upload Photos</h2>
           <form id="photoUploadForm">
             <div class="form-row">
               <label class="form-label">Category</label>
               <select class="form-input" id="photoCategory">
                 <option value="general">General</option>
-                <option value="ceremony">Ceremony</option>
-                <option value="ctf-arena">CTF Arena</option>
-                <option value="prize">Prize Distribution</option>
               </select>
             </div>
             <div class="drop-zone" id="photoDropZone">
@@ -97,12 +103,9 @@
         <div class="panel-card">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
             <h2 class="panel-section-title" style="margin:0;">Manage Photos</h2>
-            <div class="gallery-tabs" style="margin:0;font-size:0.85rem;">
+            <div class="gallery-tabs" id="adminPhotoTabs" style="margin:0;font-size:0.85rem;">
               <button class="gallery-tab active" data-category="all" onclick="filterAdminPhotos('all')">All</button>
-              <button class="gallery-tab" data-category="ceremony" onclick="filterAdminPhotos('ceremony')">Ceremony</button>
-              <button class="gallery-tab" data-category="ctf-arena" onclick="filterAdminPhotos('ctf-arena')">Arena</button>
-              <button class="gallery-tab" data-category="prize" onclick="filterAdminPhotos('prize')">Prize</button>
-              <button class="gallery-tab" data-category="general" onclick="filterAdminPhotos('general')">General</button>
+              <!-- Dynamic Tabs -->
             </div>
           </div>
           <div class="admin-gallery-grid" id="adminGalleryGrid">
