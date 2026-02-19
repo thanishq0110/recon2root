@@ -495,9 +495,9 @@ window.editOrganizer = async (id) => {
 };
 
 async function loadAdminOrganizers() {
-  const container = document.getElementById('orgList');
-  container.innerHTML = '<p class="panel-hint">Loading...</p>';
+  const container = document.getElementById('adminOrgList');
   if (!container) return;
+  container.innerHTML = '<p class="panel-hint">Loading...</p>';
   try {
     const res = await fetch(`${API}/api/organizers`);
     const data = await res.json();
@@ -506,7 +506,7 @@ async function loadAdminOrganizers() {
       container.innerHTML = '<p class="panel-hint">No organizers added yet.</p>';
       return;
     }
-    list.innerHTML = organizers.map((o) => `
+    container.innerHTML = organizers.map((o) => `
       <div class="admin-video-item org-item" data-id="${o.id}">
         <div style="display:flex;align-items:center;gap:12px;pointer-events:none;">
           <div class="drag-handle" style="display:none;cursor:grab;padding-right:8px;font-size:1.2rem;color:var(--text-muted);">☰</div>
@@ -524,19 +524,19 @@ async function loadAdminOrganizers() {
     `).join('');
     
     // Add delete listeners
-    list.querySelectorAll('.btn-delete').forEach((btn) => {
+    container.querySelectorAll('.btn-delete').forEach((btn) => {
       btn.addEventListener('click', () => deleteOrganizer(btn.dataset.id));
     });
 
     // Add drag listeners
-    list.querySelectorAll('.org-item').forEach(item => {
+    container.querySelectorAll('.org-item').forEach(item => {
       item.addEventListener('dragstart', handleDragStart);
       item.addEventListener('dragover', handleDragOver);
       item.addEventListener('drop', handleDrop);
       item.addEventListener('dragend', handleDragEnd);
     });
   } catch {
-    list.innerHTML = '<p class="panel-hint">Failed to load organizers.</p>';
+    container.innerHTML = '<p class="panel-hint">Failed to load organizers.</p>';
   }
 }
 
