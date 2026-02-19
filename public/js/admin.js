@@ -173,28 +173,86 @@ document.getElementById('photoUploadForm')?.addEventListener('submit', async (e)
   }
 });
 
+// ── Photos: State ──
+let allPhotos = [];
+let currentPhotoCategory = 'all';
+let currentPhotoPage = 1;
+const PHOTOS_PER_PAGE = 20;
+
 async function loadAdminPhotos() {
   const grid = document.getElementById('adminGalleryGrid');
+  grid.innerHTML = '<p class="panel-hint">Loading...</p>';
+
   try {
+    // Only fetch if empty (or force reload strategies, but for now fetch all)
     const res = await fetch(`${API}/api/photos`);
     const { photos } = await res.json();
-    if (!photos || photos.length === 0) {
-      grid.innerHTML = '<p class="panel-hint">No photos uploaded yet.</p>';
-      return;
-    }
-    grid.innerHTML = photos.map((p) => `
-      <div class="admin-gallery-item">
-        <img src="/uploads/photos/${p.filename}" alt="${escHtml(p.original_name)}" loading="lazy" />
-        <button class="admin-gallery-delete" data-id="${p.id}" title="Delete">✕</button>
-      </div>
-    `).join('');
-    grid.querySelectorAll('.admin-gallery-delete').forEach((btn) => {
-      btn.addEventListener('click', () => deletePhoto(btn.dataset.id));
-    });
-  } catch {
+    allPhotos = photos || [];
+    renderPhotos();
+  } catch (e) {
+    console.error(e);
     grid.innerHTML = '<p class="panel-hint">Failed to load photos.</p>';
   }
 }
+
+function renderPhotos() {
+  const grid = document.getElementById('adminGalleryGrid');
+  const pagination = document.getElementById('photoPagination');
+  
+  // 1. Filter
+  const filtered = currentPhotoCategory === 'all' 
+    ? allPhotos 
+    : allPhotos.filter(p => p.category === currentPhotoCategory);
+    
+  // 2. Paginate
+  const totalPages = Math.ceil(filtered.length / PHOTOS_PER_PAGE) || 1;
+  if (currentPhotoPage > totalPages) currentPhotoPage = totalPages;
+  if (currentPhotoPage < 1) currentPhotoPage = 1;
+  
+  const start = (currentPhotoPage - 1) * PHOTOS_PER_PAGE;
+  const pageItems = filtered.slice(start, start + PHOTOS_PER_PAGE);
+  
+  // 3. Render Grid
+  if (pageItems.length === 0) {
+    grid.innerHTML = '<p class="panel-hint">No photos found.</p>';
+  } else {
+    grid.innerHTML = pageItems.map((p) => `
+      <div class="admin-gallery-item">
+        <img src="/uploads/photos/${p.filename}" alt="${escHtml(p.original_name)}" loading="lazy" />
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);color:white;font-size:0.7rem;padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+           ${p.category || 'general'}
+        </div>
+        <button class="admin-gallery-delete" data-id="${p.id}" title="Delete">✕</button>
+      </div>
+    `).join('');
+    
+    grid.querySelectorAll('.admin-gallery-delete').forEach((btn) => {
+      btn.addEventListener('click', () => deletePhoto(btn.dataset.id));
+    });
+  }
+  
+  // 4. Update Pagination UI
+  document.getElementById('photoPageInfo').textContent = `Page ${currentPhotoPage} of ${totalPages} (${filtered.length} total)`;
+  document.getElementById('btnPrevPhotos').disabled = currentPhotoPage === 1;
+  document.getElementById('btnNextPhotos').disabled = currentPhotoPage === totalPages;
+  pagination.style.display = filtered.length > 0 ? 'flex' : 'none';
+  
+  // 5. Update Tabs UI
+  document.querySelectorAll('.gallery-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.category === currentPhotoCategory);
+  });
+}
+
+window.filterAdminPhotos = (cat) => {
+  currentPhotoCategory = cat;
+  currentPhotoPage = 1;
+  renderPhotos();
+};
+
+window.changePhotoPage = (delta) => {
+  currentPhotoPage += delta;
+  renderPhotos();
+};
 
 async function deletePhoto(id) {
   if (!confirm('Delete this photo?')) return;
@@ -244,30 +302,83 @@ document.getElementById('videoForm')?.addEventListener('submit', async (e) => {
   }
 });
 
+// ── Videos: State ──
+let allVideos = [];
+let currentVideoPage = 1;
+const VIDEOS_PER_PAGE = 20;
+
 async function loadAdminVideos() {
-  const list = document.getElementById('adminVideosList');
+  const grid = document.getElementById('adminVideosGrid');
+  grid.innerHTML = '<p class="panel-hint">Loading...</p>';
+
   try {
     const res = await fetch(`${API}/api/videos`);
     const { videos } = await res.json();
-    if (!videos || videos.length === 0) {
-      list.innerHTML = '<p class="panel-hint">No videos added yet.</p>';
-      return;
-    }
-    list.innerHTML = videos.map((v) => `
-      <div class="admin-video-item">
-        <div>
-          <div class="admin-video-title">${escHtml(v.title)}</div>
-          <div class="admin-video-type">${v.type === 'youtube' ? '▶ YouTube' : '📁 Uploaded'}</div>
+    allVideos = videos || [];
+    renderVideos();
+  } catch (e) {
+    grid.innerHTML = '<p class="panel-hint">Failed to load videos.</p>';
+  }
+}
+
+function renderVideos() {
+  const grid = document.getElementById('adminVideosGrid');
+  const pagination = document.getElementById('videoPagination');
+  
+  // 1. Paginate
+  const totalPages = Math.ceil(allVideos.length / VIDEOS_PER_PAGE) || 1;
+  if (currentVideoPage > totalPages) currentVideoPage = totalPages;
+  if (currentVideoPage < 1) currentVideoPage = 1;
+  
+  const start = (currentVideoPage - 1) * VIDEOS_PER_PAGE;
+  const pageItems = allVideos.slice(start, start + VIDEOS_PER_PAGE);
+  
+  // 2. Render Grid
+  if (pageItems.length === 0) {
+    grid.innerHTML = '<p class="panel-hint">No videos added yet.</p>';
+  } else {
+    grid.innerHTML = pageItems.map((v) => {
+      let thumb = '';
+      if (v.type === 'youtube') {
+        const videoId = extractYtId(v.youtube_url);
+        thumb = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '';
+      }
+      
+      return `
+      <div class="admin-gallery-item">
+        ${thumb 
+          ? `<img src="${thumb}" alt="${escHtml(v.title)}" style="object-fit:cover;" />`
+          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg-primary);color:var(--text-muted);flex-direction:column;gap:8px;"><span style="font-size:2rem;">🎬</span><span style="font-size:0.7rem;">${v.type}</span></div>`
+        }
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.8);color:white;font-size:0.75rem;padding:6px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+           ${escHtml(v.title)}
         </div>
-        <button class="btn-delete" data-id="${v.id}">Delete</button>
+        <button class="admin-gallery-delete" data-id="${v.id}" title="Delete">✕</button>
       </div>
-    `).join('');
-    list.querySelectorAll('.btn-delete').forEach((btn) => {
+    `}).join('');
+    
+    grid.querySelectorAll('.admin-gallery-delete').forEach((btn) => {
       btn.addEventListener('click', () => deleteVideo(btn.dataset.id));
     });
-  } catch {
-    list.innerHTML = '<p class="panel-hint">Failed to load videos.</p>';
   }
+  
+  // 3. Update Pagination UI
+  document.getElementById('videoPageInfo').textContent = `Page ${currentVideoPage} of ${totalPages} (${allVideos.length} total)`;
+  document.getElementById('btnPrevVideos').disabled = currentVideoPage === 1;
+  document.getElementById('btnNextVideos').disabled = currentVideoPage === totalPages;
+  pagination.style.display = allVideos.length > 0 ? 'flex' : 'none';
+}
+
+window.changeVideoPage = (delta) => {
+  currentVideoPage += delta;
+  renderVideos();
+};
+
+function extractYtId(url) {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
 }
 
 async function deleteVideo(id) {

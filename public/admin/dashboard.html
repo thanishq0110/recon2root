@@ -95,9 +95,23 @@
           <div class="feedback" id="photoFeedback"></div>
         </div>
         <div class="panel-card">
-          <h2 class="panel-section-title">Manage Photos</h2>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h2 class="panel-section-title" style="margin:0;">Manage Photos</h2>
+            <div class="gallery-tabs" style="margin:0;font-size:0.85rem;">
+              <button class="gallery-tab active" data-category="all" onclick="filterAdminPhotos('all')">All</button>
+              <button class="gallery-tab" data-category="ceremony" onclick="filterAdminPhotos('ceremony')">Ceremony</button>
+              <button class="gallery-tab" data-category="ctf-arena" onclick="filterAdminPhotos('ctf-arena')">Arena</button>
+              <button class="gallery-tab" data-category="prize" onclick="filterAdminPhotos('prize')">Prize</button>
+              <button class="gallery-tab" data-category="general" onclick="filterAdminPhotos('general')">General</button>
+            </div>
+          </div>
           <div class="admin-gallery-grid" id="adminGalleryGrid">
             <p class="panel-hint">Loading...</p>
+          </div>
+          <div class="pagination" id="photoPagination" style="display:none;align-items:center;justify-content:center;gap:12px;margin-top:20px;">
+            <button class="btn-save" id="btnPrevPhotos" style="padding:6px 12px;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);" onclick="changePhotoPage(-1)">Previous</button>
+            <span id="photoPageInfo" style="font-size:0.9rem;color:var(--text-muted);">Page 1 of 1</span>
+            <button class="btn-save" id="btnNextPhotos" style="padding:6px 12px;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);" onclick="changePhotoPage(1)">Next</button>
           </div>
         </div>
       </div>
@@ -148,7 +162,14 @@
         </div>
         <div class="panel-card">
           <h2 class="panel-section-title">Manage Videos</h2>
-          <div id="adminVideosList"><p class="panel-hint">Loading...</p></div>
+          <div class="admin-gallery-grid" id="adminVideosGrid">
+            <p class="panel-hint">Loading...</p>
+          </div>
+          <div class="pagination" id="videoPagination" style="display:none;align-items:center;justify-content:center;gap:12px;margin-top:20px;">
+            <button class="btn-save" id="btnPrevVideos" style="padding:6px 12px;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);" onclick="changeVideoPage(-1)">Previous</button>
+            <span id="videoPageInfo" style="font-size:0.9rem;color:var(--text-muted);">Page 1 of 1</span>
+            <button class="btn-save" id="btnNextVideos" style="padding:6px 12px;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);" onclick="changeVideoPage(1)">Next</button>
+          </div>
         </div>
       </div>
 

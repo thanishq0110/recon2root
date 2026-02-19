@@ -409,3 +409,31 @@ textarea.form-input {
   opacity: 0.3;
   cursor: default;
 }
+
+/* ── Gallery Tabs ── */
+.gallery-tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-primary);
+  padding: 4px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.gallery-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.gallery-tab:hover {
+  color: var(--text-primary);
+}
+.gallery-tab.active {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
