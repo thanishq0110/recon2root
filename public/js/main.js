@@ -324,12 +324,17 @@ async function searchCertificates(name) {
       return;
     }
 
-    certResults.innerHTML = results.map((r) => `
-      <div class="cert-result-item">
-        <div class="cert-result-name">📜 ${escHtml(r.participant_name)}</div>
+    const maxResultsMsg = results.length >= 5 
+        ? `<div style="font-size:0.8rem;text-align:center;color:var(--text-muted);margin-bottom:12px;">Showing top 5 matches. Please refine your search if you don't see your name.</div>` 
+        : '';
+
+    const listHtml = results.map((r) => `
+      <div class="cert-result-item" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;">
+        <div class="cert-result-name" style="font-weight:600;font-size:1.1rem;">📜 ${escHtml(r.participant_name)}</div>
         <a
           href="${API}/api/certificates/${r.id}/download"
           class="cert-download-btn"
+          style="display:flex;align-items:center;gap:6px;background:var(--accent);color:var(--bg-primary);padding:6px 16px;border-radius:100px;font-weight:700;font-size:0.9rem;transition:var(--transition);"
           download
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -341,6 +346,9 @@ async function searchCertificates(name) {
         </a>
       </div>
     `).join('');
+
+    certResults.innerHTML = maxResultsMsg + listHtml;
+
   } catch (e) {
     certResults.innerHTML = '<div class="cert-no-results">Search failed. Please try again.</div>';
   }

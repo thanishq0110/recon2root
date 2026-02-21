@@ -482,38 +482,74 @@ async function deleteVideo(id) {
 // ── Certificates ──────────────────────────────────────────────
 document.getElementById('certBulkForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const csvFile = document.getElementById('certCsv')?.files[0];
   const pdfFiles = document.getElementById('certPdfs')?.files;
 
-  if (!csvFile || !pdfFiles?.length) {
-    showFeedback('certBulkFeedback', 'CSV and PDF files are required', 'error');
+  if (!pdfFiles || pdfFiles.length === 0) {
+    showFeedback('certBulkFeedback', 'Please select PDF certificates to upload', 'error');
     return;
   }
 
-  const csvText = await csvFile.text();
-  const formData = new FormData();
-  formData.append('csv', csvText);
-  Array.from(pdfFiles).forEach((f) => formData.append('pdfs', f));
-
   const btn = document.getElementById('certBulkBtn');
+  const progressContainer = document.getElementById('uploadProgressContainer');
+  const progressText = document.getElementById('uploadProgressText');
+  const progressBar = document.getElementById('uploadProgressBar');
+  const percentText = document.getElementById('uploadProgressPercent');
+
   btn.disabled = true;
   btn.textContent = 'Uploading...';
-
-  try {
-    const res = await fetch(`${API}/api/certificates/bulk-upload`, { method: 'POST', body: formData });
-    const data = await res.json();
-    if (res.ok) {
-      showFeedback('certBulkFeedback', `✅ ${data.imported} certificates imported!`);
-      loadCertStats();
-    } else {
-      showFeedback('certBulkFeedback', data.error || 'Upload failed', 'error');
+  progressContainer.style.display = 'block';
+  
+  const totalFiles = pdfFiles.length;
+  let successCount = 0;
+  let failedCount = 0;
+  
+  // Chunk settings: 20 files per request to avoid timeouts/large payloads
+  const CHUNK_SIZE = 20; 
+  const filesArray = Array.from(pdfFiles);
+  
+  for (let i = 0; i < totalFiles; i += CHUNK_SIZE) {
+    const chunk = filesArray.slice(i, i + CHUNK_SIZE);
+    const formData = new FormData();
+    chunk.forEach(f => formData.append('pdfs', f));
+    
+    try {
+      const res = await fetch(`${API}/api/certificates/bulk-upload`, { method: 'POST', body: formData });
+      const data = await res.json();
+      if (res.ok) {
+        successCount += data.imported || 0;
+      } else {
+        failedCount += chunk.length;
+        console.error('Chunk upload failed:', data.error);
+      }
+    } catch (err) {
+      failedCount += chunk.length;
+      console.error('Chunk upload network error:', err);
     }
-  } catch {
-    showFeedback('certBulkFeedback', 'Network error', 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '📤 Upload All Certificates';
+    
+    // Update Progress UI
+    const processed = Math.min(i + CHUNK_SIZE, totalFiles);
+    const percent = Math.round((processed / totalFiles) * 100);
+    progressBar.style.width = `${percent}%`;
+    progressText.textContent = `Uploading... ${processed} / ${totalFiles}`;
+    percentText.textContent = `${percent}%`;
   }
+
+  // Final Feedback
+  if (failedCount === 0) {
+    showFeedback('certBulkFeedback', `✅ Successfully imported ${successCount} certificates!`);
+  } else {
+    showFeedback('certBulkFeedback', `⚠️ Imported ${successCount} certificates, but ${failedCount} failed.`, 'error');
+  }
+  
+  document.getElementById('certBulkForm').reset();
+  setTimeout(() => {
+    progressContainer.style.display = 'none';
+    progressBar.style.width = '0%';
+    btn.disabled = false;
+    btn.textContent = '📤 Upload Certificates';
+  }, 2000);
+  
+  loadCertStats();
 });
 
 document.getElementById('certSingleForm')?.addEventListener('submit', async (e) => {

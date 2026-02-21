@@ -16,7 +16,7 @@ router.get('/search', (req, res) => {
 
   const query = `%${name.trim().toLowerCase()}%`;
   const results = db.prepare(
-    'SELECT id, participant_name FROM certificates WHERE participant_name_lower LIKE ? LIMIT 20'
+    'SELECT id, participant_name FROM certificates WHERE participant_name_lower LIKE ? LIMIT 5'
   ).all(query);
 
   res.json({ results });
@@ -37,17 +37,11 @@ router.get('/:id/download', (req, res) => {
   res.download(filePath, downloadName);
 });
 
-// Bulk upload: multipart form with CSV file + multiple PDFs
-// CSV format: name,filename (filename must match uploaded PDF filename)
+// Bulk upload: multipart form with multiple PDFs
+// Name is parsed from filename (e.g., thanishq_k.pdf -> thanishq k)
 router.post('/bulk-upload', requireAuth, uploadCertificate.array('pdfs', 100), (req, res) => {
-  if (!req.body.csv) {
-    return res.status(400).json({ error: 'CSV data is required in the "csv" field' });
-  }
-
-  const lines = req.body.csv.split('\n').map((l) => l.trim()).filter(Boolean);
-  const fileMap = {};
-  for (const file of req.files || []) {
-    fileMap[file.originalname.toLowerCase()] = file.filename;
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ error: 'No PDF files were uploaded' });
   }
 
   const insert = db.prepare(`
@@ -55,20 +49,20 @@ router.post('/bulk-upload', requireAuth, uploadCertificate.array('pdfs', 100), (
     VALUES (?, ?, ?, ?)
   `);
 
-  const insertMany = db.transaction((rows) => {
+  const insertMany = db.transaction((files) => {
     let count = 0;
-    for (const line of rows) {
-      const [name, origFilename] = line.split(',').map((s) => s.trim());
-      if (!name || !origFilename) continue;
-      const storedFilename = fileMap[origFilename.toLowerCase()];
-      if (!storedFilename) continue;
-      insert.run(uuidv4(), name, name.toLowerCase(), storedFilename);
+    for (const file of files) {
+      // Parse name from original filename: remove extension, replace '_' with ' '
+      let name = file.originalname.replace('.pdf', '').replace(/_/g, ' ').trim();
+      if (!name) continue;
+      
+      insert.run(uuidv4(), name, name.toLowerCase(), file.filename);
       count++;
     }
     return count;
   });
 
-  const count = insertMany(lines);
+  const count = insertMany(req.files);
   res.json({ success: true, imported: count });
 });
 
