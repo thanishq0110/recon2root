@@ -502,6 +502,7 @@ document.getElementById('certBulkForm')?.addEventListener('submit', async (e) =>
   const totalFiles = pdfFiles.length;
   let successCount = 0;
   let failedCount = 0;
+  let skippedCount = 0;
   
   // Chunk settings: 20 files per request to avoid timeouts/large payloads
   const CHUNK_SIZE = 20; 
@@ -517,6 +518,7 @@ document.getElementById('certBulkForm')?.addEventListener('submit', async (e) =>
       const data = await res.json();
       if (res.ok) {
         successCount += data.imported || 0;
+        skippedCount += (chunk.length - (data.imported || 0));
       } else {
         failedCount += chunk.length;
         console.error('Chunk upload failed:', data.error);
@@ -535,10 +537,12 @@ document.getElementById('certBulkForm')?.addEventListener('submit', async (e) =>
   }
 
   // Final Feedback
-  if (failedCount === 0) {
-    showFeedback('certBulkFeedback', `✅ Successfully imported ${successCount} certificates!`);
+  if (failedCount === 0 && skippedCount === 0) {
+    showFeedback('certBulkFeedback', `✅ Successfully imported ${successCount} new certificates!`);
+  } else if (failedCount === 0 && skippedCount > 0) {
+    showFeedback('certBulkFeedback', `✅ Imported ${successCount} new certificates (Skipped ${skippedCount} duplicates)`);
   } else {
-    showFeedback('certBulkFeedback', `⚠️ Imported ${successCount} certificates, but ${failedCount} failed.`, 'error');
+    showFeedback('certBulkFeedback', `⚠️ Imported ${successCount}. Skipped ${skippedCount} duplicates. ${failedCount} errors.`, 'error');
   }
   
   document.getElementById('certBulkForm').reset();
@@ -589,6 +593,32 @@ async function loadCertStats() {
     // silent
   }
 }
+
+document.getElementById('btnDeleteAllCerts')?.addEventListener('click', async () => {
+  if (!confirm('🛑 Are you sure you want to delete ALL certificates?\n\nThis will remove all PDF files and database records. This action CANNOT be undone.')) {
+    return;
+  }
+  
+  const btn = document.getElementById('btnDeleteAllCerts');
+  btn.disabled = true;
+  btn.innerHTML = '🗑 Deleting...';
+  
+  try {
+    const res = await fetch(`${API}/api/certificates/all`, { method: 'DELETE' });
+    if (res.ok) {
+      alert('✅ All certificates have been deleted successfully.');
+      loadCertStats();
+    } else {
+      const data = await res.json();
+      alert(`Failed to delete certificates: ${data.error || 'Unknown error'}`);
+    }
+  } catch (err) {
+    alert('Network error while attempting to delete certificates.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🗑 Delete All';
+  }
+});
 
 // ── Content ───────────────────────────────────────────────────
 async function loadContent() {

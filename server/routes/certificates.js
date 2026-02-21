@@ -37,15 +37,14 @@ router.get('/:id/download', (req, res) => {
   res.download(filePath, downloadName);
 });
 
-// Bulk upload: multipart form with multiple PDFs
-// Name is parsed from filename (e.g., thanishq_k.pdf -> thanishq k)
 router.post('/bulk-upload', requireAuth, uploadCertificate.array('pdfs', 100), (req, res) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).json({ error: 'No PDF files were uploaded' });
   }
 
+  const checkExists = db.prepare('SELECT 1 FROM certificates WHERE participant_name_lower = ?');
   const insert = db.prepare(`
-    INSERT OR REPLACE INTO certificates (id, participant_name, participant_name_lower, filename)
+    INSERT INTO certificates (id, participant_name, participant_name_lower, filename)
     VALUES (?, ?, ?, ?)
   `);
 
@@ -56,6 +55,13 @@ router.post('/bulk-upload', requireAuth, uploadCertificate.array('pdfs', 100), (
       let name = file.originalname.replace('.pdf', '').replace(/_/g, ' ').trim();
       if (!name) continue;
       
+      const isDuplicate = checkExists.get(name.toLowerCase());
+      if (isDuplicate) {
+        // Delete the temporary uploaded file since it's a duplicate
+        try { fs.unlinkSync(file.path); } catch (e) {}
+        continue;
+      }
+      
       insert.run(uuidv4(), name, name.toLowerCase(), file.filename);
       count++;
     }
@@ -63,7 +69,24 @@ router.post('/bulk-upload', requireAuth, uploadCertificate.array('pdfs', 100), (
   });
 
   const count = insertMany(req.files);
-  res.json({ success: true, imported: count });
+  res.json({ success: true, imported: count, total: req.files.length });
+});
+
+// Delete all certificates
+router.delete('/all', requireAuth, (req, res) => {
+  // 1. Delete all PDF files from disk
+  const certDir = path.join(__dirname, '../../uploads/certificates');
+  if (fs.existsSync(certDir)) {
+    const files = fs.readdirSync(certDir);
+    for (const file of files) {
+      try { fs.unlinkSync(path.join(certDir, file)); } catch (e) {}
+    }
+  }
+
+  // 2. Clear database table
+  db.prepare('DELETE FROM certificates').run();
+  
+  res.json({ success: true });
 });
 
 // Single certificate upload
