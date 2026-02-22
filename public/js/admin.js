@@ -625,11 +625,20 @@ async function loadContent() {
   try {
     const res = await fetch(`${API}/api/content`);
     const { content } = await res.json();
-    const keys = ['hero_tagline', 'hero_subtitle', 'about_text', 'total_participants', 'total_challenges', 'event_venue', 'instagram_url', 'linkedin_url'];
+    const keys = [
+      'hero_tagline', 'hero_subtitle', 'about_text', 'total_participants', 
+      'total_challenges', 'event_venue', 'instagram_url', 'linkedin_url',
+      'maintenance_message'
+    ];
     keys.forEach((key) => {
       const el = document.getElementById(`c_${key}`);
       if (el && content[key]) el.value = content[key];
     });
+
+    const maintenanceToggle = document.getElementById('c_site_maintenance_mode');
+    if (maintenanceToggle) {
+      maintenanceToggle.checked = content['site_maintenance_mode'] === 'true';
+    }
   } catch {
     // silent
   }
@@ -637,12 +646,21 @@ async function loadContent() {
 
 document.getElementById('contentForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const keys = ['hero_tagline', 'hero_subtitle', 'about_text', 'total_participants', 'total_challenges', 'event_venue', 'instagram_url', 'linkedin_url'];
+  const keys = [
+    'hero_tagline', 'hero_subtitle', 'about_text', 'total_participants', 
+    'total_challenges', 'event_venue', 'instagram_url', 'linkedin_url',
+    'maintenance_message'
+  ];
   const updates = {};
   keys.forEach((key) => {
     const el = document.getElementById(`c_${key}`);
     if (el) updates[key] = el.value;
   });
+
+  const maintenanceToggle = document.getElementById('c_site_maintenance_mode');
+  if (maintenanceToggle) {
+    updates['site_maintenance_mode'] = maintenanceToggle.checked ? 'true' : 'false';
+  }
 
   try {
     const res = await fetch(`${API}/api/content`, {

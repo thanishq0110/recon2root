@@ -16,6 +16,13 @@
     />
   </head>
   <body>
+    <!-- ── Maintenance Mode Overlay ── -->
+    <div id="maintenanceOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-primary); z-index:9999; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center;">
+      <div style="font-size:4rem; margin-bottom:20px;">🚧</div>
+      <h1 id="maintenanceTitle" style="font-size:2.5rem; margin-bottom:16px; color:var(--text-primary); font-family:var(--font-heading);">Site Under Maintenance</h1>
+      <p id="maintenanceMessage" style="font-size:1.2rem; color:var(--text-secondary); max-width:600px; line-height:1.6;"></p>
+    </div>
+
     <!-- ── Navbar ── -->
     <nav class="navbar" id="navbar">
       <div class="container navbar-inner">

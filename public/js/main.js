@@ -33,6 +33,15 @@ async function loadContent() {
     const res = await fetch(`${API}/api/content`);
     const { content } = await res.json();
 
+    // Check Maintenance Mode First
+    if (content.site_maintenance_mode === 'true') {
+      const overlay = document.getElementById('maintenanceOverlay');
+      const msgEl = document.getElementById('maintenanceMessage');
+      if (overlay) overlay.style.display = 'flex';
+      if (msgEl) msgEl.innerText = content.maintenance_message || 'We are currently updating the site for you. Please check back later!';
+      return; // Stop loading everything else
+    }
+
     setText('heroTagline', content.hero_tagline);
     setText('heroSubtitle', content.hero_subtitle);
     setText('aboutText', content.about_text);

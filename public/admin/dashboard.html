@@ -583,6 +583,24 @@
 
       <!-- ── Content Panel ── -->
       <div class="panel" id="panel-content">
+        <div class="panel-card" style="border-left: 4px solid var(--accent);">
+          <h2 class="panel-section-title">🚧 Maintenance Mode</h2>
+          <p class="panel-hint">Temporarily hide the main website from participants.</p>
+          <div class="form-row" style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <label class="form-label" style="margin:0;">Enable Maintenance Mode</label>
+            <input type="checkbox" id="c_site_maintenance_mode" style="width:20px; height:20px; cursor:pointer;" />
+          </div>
+          <div class="form-row">
+            <label class="form-label">Maintenance Message</label>
+            <textarea
+              class="form-input"
+              id="c_maintenance_message"
+              rows="3"
+              placeholder="e.g., Certificates will be available after the Success Meet!"
+            ></textarea>
+          </div>
+        </div>
+
         <div class="panel-card">
           <h2 class="panel-section-title">Homepage Layout</h2>
           <p class="panel-hint">Reorder sections as they appear on the site.</p>
